@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="10dp"
+    android:paddingEnd="10dp"
+    android:id="@+id/blist">
+
+    <TextView
+        android:layout_marginTop="14dp"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/blist_name"
+        android:text="大王饶命"
+        android:textSize="14sp"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:gravity="center_vertical"/>
+
+    <TextView
+        android:id="@+id/blist_intro"
+        android:layout_below="@id/blist_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:text="作者：会说话的肘子"/>
+
+    <TextView
+        android:id="@+id/blist_detail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/blist_intro"
+        android:layout_marginTop="5dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:maxLines="4"
+        android:text="灵气复苏的时代……………………"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:layout_marginTop="14dp"
+        android:background="#8c8e8f"
+        android:layout_below="@id/blist_detail"/>
+
+</RelativeLayout>
