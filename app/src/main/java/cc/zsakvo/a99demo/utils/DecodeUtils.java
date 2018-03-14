@@ -30,7 +30,6 @@ public class DecodeUtils {
 
         String getContent(String url){
             try {
-                Log.d(TAG, "getContent: "+url);
                 this.url = url;
                 Document doc = Jsoup.connect(url).timeout(13000).get();
                 this.title = doc.selectFirst("h2").text();
