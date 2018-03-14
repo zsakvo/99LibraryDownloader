@@ -17,6 +17,7 @@ import java.util.List;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.utils.DecodeUtils;
 import cc.zsakvo.a99demo.utils.EpubUtils;
+import cc.zsakvo.a99demo.utils.SplitUtil;
 
 /**
  * Created by akvo on 2018/2/22.
@@ -40,7 +41,7 @@ public class DownloadTask extends AsyncTask<String,Integer,Object[]> {
         try {
             doc = Jsoup.connect(url).timeout(20000).get();
             bookName = doc.selectFirst("h2").text();
-            bookAuthor = splitElement(doc.selectFirst("h4"));
+            bookAuthor = SplitUtil.splitElement(doc.selectFirst("h4"));
             bookCoverURL = "http://www.99lib.net"+doc.selectFirst("img").attr("src");
             Elements elements_drags = doc.getElementById("right").select("dd");
             titles = new ArrayList<> ();
@@ -73,33 +74,5 @@ public class DownloadTask extends AsyncTask<String,Integer,Object[]> {
     public void setOnDataFinishedListener(
             OnDataFinishedListener onDataFinishedListener) {
         this.onDataFinishedListener = onDataFinishedListener;
-    }
-
-    private String splitElement(Element element){
-        Elements es = element.select("a");
-        String str = " ";
-        for (Element e:es){
-            String tmp = e.text()+" ";
-            str = str + tmp;
-        }
-        element.select("a").remove();
-        String tmp = element.text();
-        str = tmp+str;
-        return str;
-    }
-
-    private String splitElement(Element element,String rStr1,String rStr2){
-        Elements es = element.select("a");
-        String str = " ";
-        for (Element e:es){
-            String tmp = e.text()+" ";
-            str = str + tmp;
-        }
-        element.select("a").remove();
-        String tmp = element.text();
-        str = str.replace(rStr1,"");
-        str = str.replace(rStr2.replace("作者:",""),"");
-        str = tmp+str;
-        return str;
     }
 }
