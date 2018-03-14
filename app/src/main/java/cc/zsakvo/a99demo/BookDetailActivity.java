@@ -34,6 +34,7 @@ import java.util.List;
 
 import cc.zsakvo.a99demo.phrase.Book;
 import cc.zsakvo.a99demo.phrase.PhraseBookDetail;
+import cc.zsakvo.a99demo.task.DownloadTask;
 import cc.zsakvo.a99demo.task.GetBookDetailTask;
 import cc.zsakvo.a99demo.utils.DecodeUtils;
 import cc.zsakvo.a99demo.utils.EpubUtils;
@@ -78,7 +79,13 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()){
             case R.id.bdFab:
                 verifyStoragePermissions(BookDetailActivity.this);
-                new PhraseBookDetail().deal();
+                DownloadTask dt = new DownloadTask ();
+                initDialog();
+                setDialogTitle("下载章节中……");
+                dt.execute (url);
+                loadingDialog.dismiss();
+                Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
+//                new PhraseBookDetail().deal();
 //                new EpubUtils("2345",
 //                        book.getBookName(),
 //                        book.getBookAuthor(),
