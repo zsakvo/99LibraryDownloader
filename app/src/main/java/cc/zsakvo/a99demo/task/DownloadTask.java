@@ -1,6 +1,8 @@
 package cc.zsakvo.a99demo.task;
 
+import android.app.Dialog;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import org.jsoup.Jsoup;
@@ -12,6 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.utils.DecodeUtils;
 import cc.zsakvo.a99demo.utils.EpubUtils;
 
@@ -20,6 +23,9 @@ import cc.zsakvo.a99demo.utils.EpubUtils;
  */
 
 public class DownloadTask extends AsyncTask<String,Integer,Object[]> {
+
+    private OnDataFinishedListener onDataFinishedListener;
+
     @Override
     protected Object[] doInBackground(String... strings) {
         String url = strings[0];
@@ -42,7 +48,7 @@ public class DownloadTask extends AsyncTask<String,Integer,Object[]> {
             for (Element e:elements_drags){
             titles.add(e.selectFirst("a").text());
 //                Log.e ("doInBackground: ", e.selectFirst("a").text());
-                Log.e ("doInBackground: ", e.selectFirst("a").attr("href"));
+//                Log.e ("doInBackground: ", e.selectFirst("a").attr("href"));
 //            chapters.add("http://www.99lib.net"+e.selectFirst("a").attr("href"));
             chapters.add(DecodeUtils.url ("http://www.99lib.net"+e.selectFirst("a").attr("href")));
             }
@@ -61,6 +67,12 @@ public class DownloadTask extends AsyncTask<String,Integer,Object[]> {
                 (String)objs[3],
                 (List<String>)objs[5],
                 (List<String>)objs[4]).generateEpub();
+        onDataFinishedListener.onDataSuccessfully(1);
+    }
+
+    public void setOnDataFinishedListener(
+            OnDataFinishedListener onDataFinishedListener) {
+        this.onDataFinishedListener = onDataFinishedListener;
     }
 
     private String splitElement(Element element){

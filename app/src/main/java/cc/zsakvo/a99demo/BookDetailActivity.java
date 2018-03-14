@@ -32,6 +32,8 @@ import java.lang.ref.PhantomReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import cc.zsakvo.a99demo.listener.ItemClickListener;
+import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.phrase.Book;
 import cc.zsakvo.a99demo.phrase.PhraseBookDetail;
 import cc.zsakvo.a99demo.task.DownloadTask;
@@ -83,8 +85,20 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 initDialog();
                 setDialogTitle("下载章节中……");
                 dt.execute (url);
-                loadingDialog.dismiss();
-                Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
+                dt.setOnDataFinishedListener (new OnDataFinishedListener () {
+                    @Override
+                    public void onDataSuccessfully(Object data) {
+                         if ((int)data==1){
+                             loadingDialog.dismiss();
+                             Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
+                         }
+                    }
+
+                    @Override
+                    public void onDataFailed() {
+
+                    }
+                });
 //                new PhraseBookDetail().deal();
 //                new EpubUtils("2345",
 //                        book.getBookName(),
