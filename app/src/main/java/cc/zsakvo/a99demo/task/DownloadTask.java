@@ -48,9 +48,6 @@ public class DownloadTask extends AsyncTask<String,Integer,Object[]> {
             chapters = new ArrayList<>();
             for (Element e:elements_drags){
             titles.add(e.selectFirst("a").text());
-//                Log.e ("doInBackground: ", e.selectFirst("a").text());
-//                Log.e ("doInBackground: ", e.selectFirst("a").attr("href"));
-//            chapters.add("http://www.99lib.net"+e.selectFirst("a").attr("href"));
             chapters.add(DecodeUtils.url ("http://www.99lib.net"+e.selectFirst("a").attr("href")));
             }
         } catch (IOException e) {
