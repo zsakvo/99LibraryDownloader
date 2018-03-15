@@ -65,13 +65,11 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         fab = (FloatingActionButton)findViewById(R.id.bdFab);
         fab.setOnClickListener(this);
         toolbar.setTitle("书籍详情");
-//        String title = getIntent().getStringExtra("title");
         url = getIntent().getStringExtra("url");
         tv_title = (TextView)findViewById(R.id.bdTitle);
         tv_intro = (TextView)findViewById(R.id.bdIntro);
         tv_detail = (TextView)findViewById(R.id.bdDetail);
         iv_cover = (ImageView)findViewById(R.id.bdCover);
-//        initShow();
         new GetBookDetailTask (tv_title,tv_intro,tv_detail,iv_cover).execute (url);
     }
 
@@ -99,14 +97,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
                     }
                 });
-//                new PhraseBookDetail().deal();
-//                new EpubUtils("2345",
-//                        book.getBookName(),
-//                        book.getBookAuthor(),
-//                        book.getBookCoverURL(),
-//                        book.getChapters(),
-//                        book.getTitles()).generateEpub();
-//                Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
                 break;
         }
     }
@@ -134,85 +124,85 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         d_tv.setText(title);
     }
 
-    class PhraseBookDetail {
-        private String bookID;
-        private String bookName;
-        private String bookAuthor;
-        private String bookCoverURL;
-        private List<String> chapters;
-        private List<String> titles;
-
-        public void deal(){
-            initDialog();
-            setDialogTitle("下载章节中……");
-            bookID = url.replace("http://www.99lib.net/book/","").replace("/index.htm","");
-            Message msg = new Message();
-            @SuppressLint("HandlerLeak")
-            android.os.Handler handler = new android.os.Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    switch (msg.what) {
-                        case 0:
-//                            book = new Book(bookID,bookName,bookAuthor,bookCoverURL,chapters,titles);
-                            setDialogTitle("正在下载……");
-                            new EpubUtils(bookID,bookName,bookAuthor,bookCoverURL,chapters,titles).generateEpub();
-                            loadingDialog.dismiss();
-                            Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            };
-            new getResult(handler,msg).start();
-        }
-
-        class getResult extends Thread{
-            Handler handler;
-            Message msg;
-            public getResult(Handler handler, Message msg){
-                this.handler = handler;
-                this.msg = msg;
-            }
-
-            private String splitElement(Element element){
-                Elements es = element.select("a");
-                String str = "";
-                for (Element e:es){
-                    String tmp = e.text()+" ";
-                    str = str + tmp;
-                }
-                element.select("a").remove();
-                String tmp = element.text()+" ";
-                str = tmp+str;
-                return str;
-            }
-
-            @Override
-            public void run() {
-                super.run();
-                try {
-                    int p = 1;
-                    Document doc = Jsoup.connect(url).timeout(20000).get();
-                    bookName = doc.selectFirst("h2").text();
-                    bookAuthor = splitElement(doc.selectFirst("h4"));
-                    bookCoverURL = "http://www.99lib.net"+doc.selectFirst("img").attr("src");
-                    Elements elements_drags = doc.getElementById("right").select("dd");
-                    titles = new ArrayList<>();
-                    chapters = new ArrayList<>();
-                    for (Element e:elements_drags){
-                        titles.add(e.selectFirst("a").text());
-                        chapters.add(DecodeUtils.url("http://www.99lib.net"+e.selectFirst("a").attr("href")));
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                msg.what = 0;
-                handler.sendMessage(msg);
-            }
-        }
-
-    }
+//    class PhraseBookDetail {
+//        private String bookID;
+//        private String bookName;
+//        private String bookAuthor;
+//        private String bookCoverURL;
+//        private List<String> chapters;
+//        private List<String> titles;
+//
+//        public void deal(){
+//            initDialog();
+//            setDialogTitle("下载章节中……");
+//            bookID = url.replace("http://www.99lib.net/book/","").replace("/index.htm","");
+//            Message msg = new Message();
+//            @SuppressLint("HandlerLeak")
+//            android.os.Handler handler = new android.os.Handler() {
+//                @Override
+//                public void handleMessage(Message msg) {
+//                    switch (msg.what) {
+//                        case 0:
+////                            book = new Book(bookID,bookName,bookAuthor,bookCoverURL,chapters,titles);
+//                            setDialogTitle("正在下载……");
+//                            new EpubUtils(bookID,bookName,bookAuthor,bookCoverURL,chapters,titles).generateEpub();
+//                            loadingDialog.dismiss();
+//                            Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                }
+//            };
+//            new getResult(handler,msg).start();
+//        }
+//
+//        class getResult extends Thread{
+//            Handler handler;
+//            Message msg;
+//            public getResult(Handler handler, Message msg){
+//                this.handler = handler;
+//                this.msg = msg;
+//            }
+//
+//            private String splitElement(Element element){
+//                Elements es = element.select("a");
+//                String str = "";
+//                for (Element e:es){
+//                    String tmp = e.text()+" ";
+//                    str = str + tmp;
+//                }
+//                element.select("a").remove();
+//                String tmp = element.text()+" ";
+//                str = tmp+str;
+//                return str;
+//            }
+//
+//            @Override
+//            public void run() {
+//                super.run();
+//                try {
+//                    int p = 1;
+//                    Document doc = Jsoup.connect(url).timeout(20000).get();
+//                    bookName = doc.selectFirst("h2").text();
+//                    bookAuthor = splitElement(doc.selectFirst("h4"));
+//                    bookCoverURL = "http://www.99lib.net"+doc.selectFirst("img").attr("src");
+//                    Elements elements_drags = doc.getElementById("right").select("dd");
+//                    titles = new ArrayList<>();
+//                    chapters = new ArrayList<>();
+//                    for (Element e:elements_drags){
+//                        titles.add(e.selectFirst("a").text());
+//                        chapters.add(DecodeUtils.url("http://www.99lib.net"+e.selectFirst("a").attr("href")));
+//                    }
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                msg.what = 0;
+//                handler.sendMessage(msg);
+//            }
+//        }
+//
+//    }
 
     public static void verifyStoragePermissions(Activity activity) {
 
