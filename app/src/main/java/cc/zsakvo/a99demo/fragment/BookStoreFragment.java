@@ -44,6 +44,7 @@ public class BookStoreFragment extends BaseFragment implements ItemClickListener
     private RecyclerView recyclerView;
     private StateView mStateView;
     private List<BookList> listDetails = new ArrayList<>();
+    private RefreshLayout refreshLayout;
     cc.zsakvo.a99demo.adapter.ListAdapter adapter;
     FloatingActionButton fab;
     int page = 1;
@@ -63,7 +64,7 @@ public class BookStoreFragment extends BaseFragment implements ItemClickListener
     public View bindLayout(LayoutInflater layoutInflater){
         mRootView = layoutInflater.inflate(R.layout.fragment_99lib,null);
         mStateView = StateView.inject(mRootView, true);
-        RefreshLayout refreshLayout = (RefreshLayout)mRootView.findViewById(R.id.refreshLayout);
+        refreshLayout = (RefreshLayout)mRootView.findViewById(R.id.refreshLayout);
         refreshLayout.setOnRefreshListener(new OnRefreshListener() {
             @Override
             public void onRefresh(RefreshLayout refreshlayout) {
@@ -98,6 +99,7 @@ public class BookStoreFragment extends BaseFragment implements ItemClickListener
     @Override
     protected void initData(){
         page = 1;
+
         new GetBookListTask (adapter,listDetails,mStateView).execute (baseURL+page);
     }
 

@@ -40,7 +40,7 @@ public class GetBookListTask extends AsyncTask<String,java.lang.Void,Integer> {
 
     @Override
     protected void onPreExecute() {
-        mStateView.showLoading ();
+//        mStateView.showLoading ();
     }
 
     @Override
