@@ -1,12 +1,8 @@
 package cc.zsakvo.a99demo;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.Message;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -14,32 +10,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
-import java.io.IOException;
-import java.lang.ref.PhantomReference;
-import java.util.ArrayList;
-import java.util.List;
-
-import cc.zsakvo.a99demo.listener.ItemClickListener;
+import cc.zsakvo.a99demo.classes.DownloadDetails;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.phrase.Book;
-import cc.zsakvo.a99demo.phrase.PhraseBookDetail;
-import cc.zsakvo.a99demo.task.DownloadTask;
+import cc.zsakvo.a99demo.task.GetDownloadInfoTask;
 import cc.zsakvo.a99demo.task.GetBookDetailTask;
-import cc.zsakvo.a99demo.utils.DecodeUtils;
-import cc.zsakvo.a99demo.utils.EpubUtils;
+import cc.zsakvo.a99demo.utils.DialogUtils;
 
 public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -52,6 +37,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     FloatingActionButton fab;
     Book book;
     Dialog loadingDialog;
+
+
+    DownloadDetails downloadDetails = null;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
             "android.permission.READ_EXTERNAL_STORAGE",
@@ -79,17 +67,15 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()){
             case R.id.bdFab:
                 verifyStoragePermissions(BookDetailActivity.this);
-                DownloadTask dt = new DownloadTask ();
-                initDialog();
-                setDialogTitle("下载章节中……");
-                dt.execute (url);
-                dt.setOnDataFinishedListener (new OnDataFinishedListener () {
+                DialogUtils du = new DialogUtils (this,loadingDialog);
+                du.initDialog ();
+                du.setDialogTitle ("222233334445");
+                GetDownloadInfoTask gdi = new GetDownloadInfoTask ();
+                gdi.setOnDataFinishedListener (new OnDataFinishedListener () {
                     @Override
                     public void onDataSuccessfully(Object data) {
-                         if ((int)data==1){
-                             loadingDialog.dismiss();
-                             Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
-                         }
+                        downloadDetails = (DownloadDetails)data;
+                        Log.e ("onDataSuccessfully: ",downloadDetails.getBookName () );
                     }
 
                     @Override
@@ -97,7 +83,27 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
                     }
                 });
-                break;
+
+                gdi.execute (url);
+//                GetDownloadInfoTask dt = new GetDownloadInfoTask ();
+//                initDialog();
+//                setDialogTitle("下载章节中……");
+//                dt.execute (url);
+//                dt.setOnDataFinishedListener (new OnDataFinishedListener () {
+//                    @Override
+//                    public void onDataSuccessfully(Object data) {
+//                         if ((int)data==1){
+//                             loadingDialog.dismiss();
+//                             Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
+//                         }
+//                    }
+//
+//                    @Override
+//                    public void onDataFailed() {
+//
+//                    }
+//                });
+//                break;
         }
     }
 
