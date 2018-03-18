@@ -28,6 +28,9 @@ import cc.zsakvo.a99demo.task.DownloadTask;
 import cc.zsakvo.a99demo.task.GetDownloadInfoTask;
 import cc.zsakvo.a99demo.task.GetBookDetailTask;
 import cc.zsakvo.a99demo.utils.DialogUtils;
+import cc.zsakvo.a99demo.utils.SplitUtil;
+
+import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
 public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,6 +44,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     Book book;
     Dialog loadingDialog;
     ConcurrentHashMap<Integer,String> ch = new ConcurrentHashMap<> ();
+    private int nowNum;
 
 
     DownloadDetails downloadDetails = null;
@@ -77,13 +81,14 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                     @Override
                     public void onDataSuccessfully(Object data) {
                         downloadDetails = (DownloadDetails)data;
-                        Log.e ("onDataSuccessfully: ",downloadDetails.getBookName () );
                         du.setAllNum (downloadDetails.getChapterIDs ().size ());
-                        DownloadTask dt = new DownloadTask (downloadDetails.getBookID (),
+                        for (int[] integers:SplitUtil.splitChaIDsByNum (downloadDetails.getChapterIDs (),3)){
+                            new DownloadTask (downloadDetails.getBookID (),
                                 ch,
                                 du,
-                                downloadDetails.getChapterIDs ().size ());
-                        dt.execute (314516,314516,314516,314516,314516,314516,314516);
+                                downloadDetails.getChapterIDs ().size (),nowNum)
+                            .executeOnExecutor (THREAD_POOL_EXECUTOR,integers);
+                        }
                     }
 
                     @Override
@@ -92,25 +97,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                     }
                 });
                 gdi.execute (url);
-//                GetDownloadInfoTask dt = new GetDownloadInfoTask ();
-//                initDialog();
-//                setDialogTitle("下载章节中……");
-//                dt.execute (url);
-//                dt.setOnDataFinishedListener (new OnDataFinishedListener () {
-//                    @Override
-//                    public void onDataSuccessfully(Object data) {
-//                         if ((int)data==1){
-//                             loadingDialog.dismiss();
-//                             Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
-//                         }
-//                    }
-//
-//                    @Override
-//                    public void onDataFailed() {
-//
-//                    }
-//                });
-//                break;
         }
     }
 
