@@ -69,7 +69,6 @@ public class GetDownloadInfoTask extends AsyncTask<Object,Integer,DownloadDetail
             chapters = new ArrayList<>();
             for (Element e:elements_drags){
             titles.add(e.selectFirst("a").text());
-//            chapters.add(DecodeUtils.url ("http://www.99lib.net"+e.selectFirst("a").attr("href")));
             chapterIDs.add(ReplaceUtils.getChapterID (bookID,e.selectFirst("a").attr("href")));
             }
             size = chapters.size ();

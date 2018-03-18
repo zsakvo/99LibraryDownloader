@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cc.zsakvo.a99demo.classes.BookList;
+import cc.zsakvo.a99demo.classes.DownloadDetails;
 import cc.zsakvo.a99demo.listener.ItemClickListener;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.task.GetCategoryListTask;
@@ -112,7 +113,16 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
             }
 
             @Override
+            public void onDataSuccessfully(DownloadDetails data) {
+
+            }
+
+            @Override
             public void onDataFailed() {
+
+            }
+            @Override
+            public void onDownloadFinishedNum(int num){
 
             }
         });

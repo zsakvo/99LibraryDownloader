@@ -32,7 +32,7 @@ import cc.zsakvo.a99demo.utils.SplitUtil;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
-public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener {
+public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener {
 
     Toolbar toolbar;
     String title,intro,detail,coverUrl;
@@ -45,6 +45,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     Dialog loadingDialog;
     ConcurrentHashMap<Integer,String> ch = new ConcurrentHashMap<> ();
     private int nowNum;
+    private int allNum;
+    DialogUtils du;
 
 
     DownloadDetails downloadDetails = null;
@@ -66,6 +68,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_intro = (TextView)findViewById(R.id.bdIntro);
         tv_detail = (TextView)findViewById(R.id.bdDetail);
         iv_cover = (ImageView)findViewById(R.id.bdCover);
+        du = new DialogUtils (this,loadingDialog);
         new GetBookDetailTask (tv_title,tv_intro,tv_detail,iv_cover).execute (url);
     }
 
@@ -75,27 +78,27 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()){
             case R.id.bdFab:
                 verifyStoragePermissions(BookDetailActivity.this);
-                final DialogUtils du = new DialogUtils (this,loadingDialog);
                 GetDownloadInfoTask gdi = new GetDownloadInfoTask (du);
-                gdi.setOnDataFinishedListener (new OnDataFinishedListener () {
-                    @Override
-                    public void onDataSuccessfully(Object data) {
-                        downloadDetails = (DownloadDetails)data;
-                        du.setAllNum (downloadDetails.getChapterIDs ().size ());
-                        for (int[] integers:SplitUtil.splitChaIDsByNum (downloadDetails.getChapterIDs (),3)){
-                            new DownloadTask (downloadDetails.getBookID (),
-                                ch,
-                                du,
-                                downloadDetails.getChapterIDs ().size (),nowNum)
-                            .executeOnExecutor (THREAD_POOL_EXECUTOR,integers);
-                        }
-                    }
-
-                    @Override
-                    public void onDataFailed() {
-
-                    }
-                });
+                gdi.setOnDataFinishedListener (this);
+//                gdi.setOnDataFinishedListener (new OnDataFinishedListener () {
+//                    @Override
+//                    public void onDataSuccessfully(Object data) {
+//                        downloadDetails = (DownloadDetails)data;
+//                        du.setAllNum (downloadDetails.getChapterIDs ().size ());
+//                        for (int[] integers:SplitUtil.splitChaIDsByNum (downloadDetails.getChapterIDs (),3)){
+//                            new DownloadTask (downloadDetails.getBookID (),
+//                                ch,
+//                                du,
+//                                downloadDetails.getChapterIDs ().size (),nowNum)
+//                            .executeOnExecutor (THREAD_POOL_EXECUTOR,integers);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onDataFailed() {
+//
+//                    }
+//                });
                 gdi.execute (url);
         }
     }
@@ -123,85 +126,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         d_tv.setText(title);
     }
 
-//    class PhraseBookDetail {
-//        private String bookID;
-//        private String bookName;
-//        private String bookAuthor;
-//        private String bookCoverURL;
-//        private List<String> chapters;
-//        private List<String> titles;
-//
-//        public void deal(){
-//            initDialog();
-//            setDialogTitle("下载章节中……");
-//            bookID = url.replace("http://www.99lib.net/book/","").replace("/index.htm","");
-//            Message msg = new Message();
-//            @SuppressLint("HandlerLeak")
-//            android.os.Handler handler = new android.os.Handler() {
-//                @Override
-//                public void handleMessage(Message msg) {
-//                    switch (msg.what) {
-//                        case 0:
-////                            book = new Book(bookID,bookName,bookAuthor,bookCoverURL,chapters,titles);
-//                            setDialogTitle("正在下载……");
-//                            new EpubUtils(bookID,bookName,bookAuthor,bookCoverURL,chapters,titles).generateEpub();
-//                            loadingDialog.dismiss();
-//                            Snackbar.make(fab,"下载完毕！",Snackbar.LENGTH_LONG).show();
-//                            break;
-//                        default:
-//                            break;
-//                    }
-//                }
-//            };
-//            new getResult(handler,msg).start();
-//        }
-//
-//        class getResult extends Thread{
-//            Handler handler;
-//            Message msg;
-//            public getResult(Handler handler, Message msg){
-//                this.handler = handler;
-//                this.msg = msg;
-//            }
-//
-//            private String splitElement(Element element){
-//                Elements es = element.select("a");
-//                String str = "";
-//                for (Element e:es){
-//                    String tmp = e.text()+" ";
-//                    str = str + tmp;
-//                }
-//                element.select("a").remove();
-//                String tmp = element.text()+" ";
-//                str = tmp+str;
-//                return str;
-//            }
-//
-//            @Override
-//            public void run() {
-//                super.run();
-//                try {
-//                    int p = 1;
-//                    Document doc = Jsoup.connect(url).timeout(20000).get();
-//                    bookName = doc.selectFirst("h2").text();
-//                    bookAuthor = splitElement(doc.selectFirst("h4"));
-//                    bookCoverURL = "http://www.99lib.net"+doc.selectFirst("img").attr("src");
-//                    Elements elements_drags = doc.getElementById("right").select("dd");
-//                    titles = new ArrayList<>();
-//                    chapters = new ArrayList<>();
-//                    for (Element e:elements_drags){
-//                        titles.add(e.selectFirst("a").text());
-//                        chapters.add(DecodeUtils.url("http://www.99lib.net"+e.selectFirst("a").attr("href")));
-//                    }
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//                msg.what = 0;
-//                handler.sendMessage(msg);
-//            }
-//        }
-//
-//    }
 
     public static void verifyStoragePermissions(Activity activity) {
 
@@ -215,6 +139,39 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDataSuccessfully(Object data) {
+
+    }
+
+    @Override
+    public void onDataSuccessfully(DownloadDetails downloadDetails) {
+        allNum = downloadDetails.getChapterIDs ().size ();
+        du.setAllNum (allNum);
+        for (int[] integers:SplitUtil.splitChaIDsByNum (downloadDetails.getChapterIDs (),3)){
+            new DownloadTask (downloadDetails.getBookID (),
+                    ch,
+                    du,
+                    allNum,
+                    nowNum,
+                    this)
+                    .executeOnExecutor (THREAD_POOL_EXECUTOR,integers);
+        }
+    }
+
+    @Override
+    public void onDataFailed() {
+
+    }
+
+    @Override
+    public void onDownloadFinishedNum(int num){
+        nowNum+=num;
+        if (nowNum>=allNum){
+            du.setDialogTitle ("正在写出数据……");
         }
     }
 }

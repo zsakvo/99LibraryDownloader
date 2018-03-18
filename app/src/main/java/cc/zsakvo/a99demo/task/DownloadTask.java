@@ -6,6 +6,7 @@ import android.util.Log;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.zsakvo.a99demo.classes.DownloadDetails;
+import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.utils.DecodeUtils;
 import cc.zsakvo.a99demo.utils.DialogUtils;
 
@@ -21,13 +22,15 @@ public class DownloadTask extends AsyncTask<int[],Integer,Integer> {
     private DialogUtils du;
     private int allNum;
     private int nowNum;
+    private OnDataFinishedListener onDataFinishedListener;
 
-    public DownloadTask(String bookID, ConcurrentHashMap<Integer,String> ch, DialogUtils du,int allNum,int nowNum){
+    public DownloadTask(String bookID, ConcurrentHashMap<Integer,String> ch, DialogUtils du,int allNum,int nowNum,OnDataFinishedListener onDataFinishedListener){
         this.bookID = bookID;
         this.ch = ch;
         this.du = du;
         this.allNum = allNum;
         this.nowNum = nowNum;
+        this.onDataFinishedListener = onDataFinishedListener;
     }
 
     @Override
@@ -42,7 +45,6 @@ public class DownloadTask extends AsyncTask<int[],Integer,Integer> {
             if (i==0){
                 continue;
             }
-            Log.e ( "doInBackground: ",url );
             ch.put (i,DecodeUtils.url (url));
             publishProgress();
         }
@@ -54,5 +56,6 @@ public class DownloadTask extends AsyncTask<int[],Integer,Integer> {
     protected void onProgressUpdate(Integer...integers){
         super.onProgressUpdate (integers);
         du.addProgress (allNum);
+        onDataFinishedListener.onDownloadFinishedNum (this.downloadsNum);
     }
 }
