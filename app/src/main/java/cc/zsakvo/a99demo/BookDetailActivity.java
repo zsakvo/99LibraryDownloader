@@ -19,9 +19,12 @@ import android.widget.TextView;
 
 import org.jsoup.nodes.Document;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import cc.zsakvo.a99demo.classes.DownloadDetails;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.phrase.Book;
+import cc.zsakvo.a99demo.task.DownloadTask;
 import cc.zsakvo.a99demo.task.GetDownloadInfoTask;
 import cc.zsakvo.a99demo.task.GetBookDetailTask;
 import cc.zsakvo.a99demo.utils.DialogUtils;
@@ -37,6 +40,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     FloatingActionButton fab;
     Book book;
     Dialog loadingDialog;
+    ConcurrentHashMap<Integer,String> ch = new ConcurrentHashMap<> ();
 
 
     DownloadDetails downloadDetails = null;
@@ -67,15 +71,19 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         switch (view.getId()){
             case R.id.bdFab:
                 verifyStoragePermissions(BookDetailActivity.this);
-                DialogUtils du = new DialogUtils (this,loadingDialog);
-                du.initDialog ();
-                du.setDialogTitle ("222233334445");
-                GetDownloadInfoTask gdi = new GetDownloadInfoTask ();
+                final DialogUtils du = new DialogUtils (this,loadingDialog);
+                GetDownloadInfoTask gdi = new GetDownloadInfoTask (du);
                 gdi.setOnDataFinishedListener (new OnDataFinishedListener () {
                     @Override
                     public void onDataSuccessfully(Object data) {
                         downloadDetails = (DownloadDetails)data;
                         Log.e ("onDataSuccessfully: ",downloadDetails.getBookName () );
+                        du.setAllNum (downloadDetails.getChapterIDs ().size ());
+                        DownloadTask dt = new DownloadTask (downloadDetails.getBookID (),
+                                ch,
+                                du,
+                                downloadDetails.getChapterIDs ().size ());
+                        dt.execute (314516,314516,314516,314516,314516,314516,314516);
                     }
 
                     @Override
@@ -83,7 +91,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
                     }
                 });
-
                 gdi.execute (url);
 //                GetDownloadInfoTask dt = new GetDownloadInfoTask ();
 //                initDialog();

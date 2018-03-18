@@ -20,6 +20,7 @@ import cc.zsakvo.a99demo.classes.DownloadDetails;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.listener.OnDatasFinishedListener;
 import cc.zsakvo.a99demo.utils.DecodeUtils;
+import cc.zsakvo.a99demo.utils.DialogUtils;
 import cc.zsakvo.a99demo.utils.EpubUtils;
 import cc.zsakvo.a99demo.utils.ReplaceUtils;
 import cc.zsakvo.a99demo.utils.SplitUtil;
@@ -33,11 +34,17 @@ public class GetDownloadInfoTask extends AsyncTask<Object,Integer,DownloadDetail
     private OnDataFinishedListener onDataFinishedListener;
     private String[] chapt;
     private int size;
-    private DownloadDetails downloadDetails;
+    private DialogUtils dialogUtils;
 
-//    public GetDownloadInfoTask(DownloadDetails downloadDetails){
-//        this.downloadDetails = downloadDetails;
-//    }
+    public GetDownloadInfoTask(DialogUtils dialogUtils){
+        this.dialogUtils = dialogUtils;
+    }
+
+    @Override
+    protected void onPreExecute() {
+        dialogUtils.initDialog ();
+        dialogUtils.setDialogTitle ("正在获取书籍信息，请稍后……");
+    }
 
     @Override
     protected DownloadDetails doInBackground(Object... objs) {
@@ -75,7 +82,7 @@ public class GetDownloadInfoTask extends AsyncTask<Object,Integer,DownloadDetail
                 bookAuthor,
                 bookCoverURL,
                 titles,
-                null,
+                chapterIDs,
                 null);
     }
 

@@ -33,7 +33,7 @@ public class DecodeUtils {
                 this.url = url;
                 Document doc = Jsoup.connect(url).timeout(13000).get();
                 this.title = doc.selectFirst("h2").text();
-                doc.select("strike,acronym,bdo,big,site,code,dfn,kbd,q,s,samp,tt,u,var")
+                doc.select("strike,acronym,bdo,big,site,code,dfn,kbd,q,s,samp,tt,u,var,cite")
                         .remove();
                 this.client = doc.select("meta").get(4).attr("content");
                 this.content = doc.getElementById("content");

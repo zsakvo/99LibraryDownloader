@@ -31,7 +31,7 @@ public class DownloadDetails {
         return chapters;
     }
 
-    public List<String> getChapterIDs() {
+    public List<Integer> getChapterIDs() {
         return chapterIDs;
     }
 
@@ -41,9 +41,9 @@ public class DownloadDetails {
     private String bookCoverURL;
     private List<String> titles;
     private List<String> chapters;
-    private List<String> chapterIDs;
+    private List<Integer> chapterIDs;
 
-    public DownloadDetails(String bookID,String bookName,String bookAuthor,String bookCoverURL,List<String> titles,List<String> chapterIDs,List<String> chapters){
+    public DownloadDetails(String bookID,String bookName,String bookAuthor,String bookCoverURL,List<String> titles,List<Integer> chapterIDs,List<String> chapters){
         this.bookID = bookID;
         this.bookName = bookName;
         this.bookAuthor = bookAuthor;
