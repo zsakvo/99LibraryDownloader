@@ -1,8 +1,6 @@
 package cc.zsakvo.a99demo.task;
 
-import android.app.Dialog;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import org.jsoup.Jsoup;
@@ -11,17 +9,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cc.zsakvo.a99demo.classes.DownloadDetails;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
-import cc.zsakvo.a99demo.listener.OnDatasFinishedListener;
-import cc.zsakvo.a99demo.utils.DecodeUtils;
 import cc.zsakvo.a99demo.utils.DialogUtils;
-import cc.zsakvo.a99demo.utils.EpubUtils;
 import cc.zsakvo.a99demo.utils.ReplaceUtils;
 import cc.zsakvo.a99demo.utils.SplitUtil;
 
