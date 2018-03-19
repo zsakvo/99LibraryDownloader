@@ -17,13 +17,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.scwang.smartrefresh.header.MaterialHeader;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+
 import org.jsoup.nodes.Document;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import cc.zsakvo.a99demo.application.MyApplication;
 import cc.zsakvo.a99demo.classes.DownloadDetails;
+import cc.zsakvo.a99demo.listener.Interface;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.phrase.Book;
 import cc.zsakvo.a99demo.task.DownloadTask;
@@ -35,22 +42,19 @@ import cc.zsakvo.a99demo.utils.SplitUtil;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
-public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener,EpubUtils.getResult{
+public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener,EpubUtils.getResult,Interface.GetBookDetailFinish,OnRefreshListener{
 
     Toolbar toolbar;
-    String title,intro,detail,coverUrl;
-    Document doc;
     TextView tv_title,tv_intro,tv_detail;
     ImageView iv_cover;
+    RefreshLayout refreshLayout;
     String url;
     FloatingActionButton fab;
-    Book book;
     Dialog loadingDialog;
     ConcurrentHashMap<Integer,String> ch = new ConcurrentHashMap<> ();
     private int nowNum;
     private int allNum;
     private List<Integer> chapterIDs;
-    private List<String> chapters;
     DialogUtils du;
     DownloadDetails downloadDetails = null;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -72,7 +76,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_detail = (TextView)findViewById(R.id.bdDetail);
         iv_cover = (ImageView)findViewById(R.id.bdCover);
         du = new DialogUtils (this,loadingDialog);
-        new GetBookDetailTask (tv_title,tv_intro,tv_detail,iv_cover).execute (url);
+
+        refreshLayout = (RefreshLayout) findViewById (R.id.bdRefreshLayout);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setEnableAutoLoadmore (true);
+        MaterialHeader mMaterialHeader = (MaterialHeader) refreshLayout.getRefreshHeader ();
+        refreshLayout.autoRefresh ();
     }
 
 
@@ -83,52 +92,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 verifyStoragePermissions(BookDetailActivity.this);
                 GetDownloadInfoTask gdi = new GetDownloadInfoTask (du);
                 gdi.setOnDataFinishedListener (this);
-//                gdi.setOnDataFinishedListener (new OnDataFinishedListener () {
-//                    @Override
-//                    public void onDataSuccessfully(Object data) {
-//                        downloadDetails = (DownloadDetails)data;
-//                        du.setAllNum (downloadDetails.getChapterIDs ().size ());
-//                        for (int[] integers:SplitUtil.splitChaIDsByNum (downloadDetails.getChapterIDs (),3)){
-//                            new DownloadTask (downloadDetails.getBookID (),
-//                                ch,
-//                                du,
-//                                downloadDetails.getChapterIDs ().size (),nowNum)
-//                            .executeOnExecutor (THREAD_POOL_EXECUTOR,integers);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onDataFailed() {
-//
-//                    }
-//                });
                 gdi.execute (url);
         }
     }
-
-
-
-    private void initDialog(){
-        LayoutInflater inflater = LayoutInflater.from(BookDetailActivity.this);
-        View v = inflater.inflate(R.layout.dialog, null); // 得到加载view
-        DisplayMetrics displaymetrics = new DisplayMetrics();
-        BookDetailActivity.this.getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        int screenWidth = displaymetrics.widthPixels;
-        v.setMinimumWidth((int) (screenWidth * 0.8));
-        LinearLayout layout = (LinearLayout) v.findViewById(R.id.dia_lay); // 加载布局
-        loadingDialog = new Dialog(BookDetailActivity.this); // 创建自定义样式dialog
-        loadingDialog.setCancelable(false); // 不可以用"返回键"取消
-        loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT));
-        loadingDialog.show();
-    }
-
-    private void setDialogTitle(String title){
-        TextView d_tv = loadingDialog.findViewById(R.id.dia_text);
-        d_tv.setText(title);
-    }
-
 
     public static void verifyStoragePermissions(Activity activity) {
 
@@ -175,7 +141,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onDownloadFinishedNum(int num){
         nowNum+=num;
-        chapters = new ArrayList<> ();
+        List<String> chapters = new ArrayList<> ();
         if (nowNum>=allNum){
             du.setDialogTitle ("正在写出数据……");
             for (int id:chapterIDs){
@@ -197,5 +163,27 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             du.concelDialog ();
             Snackbar.make (fab,"书籍下载完毕！",Snackbar.LENGTH_LONG).show ();
         }
+    }
+
+    @Override
+    public void GetFailed() {
+        refreshLayout.finishRefresh (false);
+        Snackbar.make (fab,"数据获取失败，请检查网络连接或重试",Snackbar.LENGTH_LONG).show ();
+    }
+
+    @Override
+    public void GetSuccessful(String...strings) {
+        tv_title.setText (strings[0]);
+        tv_intro.setText (strings[1]);
+        tv_detail.setText (strings[2]);
+        Glide.with(this)
+                .load(strings[3])
+                .into(iv_cover);
+        refreshLayout.finishRefresh (1000);
+    }
+
+    @Override
+    public void onRefresh(RefreshLayout refreshlayout) {
+        new GetBookDetailTask (this).execute (url);
     }
 }

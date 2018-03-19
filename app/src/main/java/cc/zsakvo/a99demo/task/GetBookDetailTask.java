@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import cc.zsakvo.a99demo.BookDetailActivity;
 import cc.zsakvo.a99demo.application.MyApplication;
+import cc.zsakvo.a99demo.listener.Interface;
 import cc.zsakvo.a99demo.utils.SplitUtil;
 
 /**
@@ -27,14 +28,16 @@ public class GetBookDetailTask extends AsyncTask<String,Void,String[]>{
     private TextView tv_intro;
     private TextView tv_detail;
     private ImageView iv_cover;
+    private Interface.GetBookDetailFinish gbdf;
 
 
 
-    public GetBookDetailTask(TextView tv_title, TextView tv_intro, TextView tv_detail, ImageView iv_cover){
+    public GetBookDetailTask(Interface.GetBookDetailFinish gbdf){
         this.tv_title = tv_title;
         this.tv_intro = tv_intro;
         this.tv_detail = tv_detail;
         this.iv_cover = iv_cover;
+        this.gbdf = gbdf;
     }
 
     @Override
@@ -70,12 +73,11 @@ public class GetBookDetailTask extends AsyncTask<String,Void,String[]>{
     @Override
     protected void onPostExecute(String[] strings){
         super.onPostExecute (strings);
-        tv_title.setText(strings[0]);
-        tv_intro.setText(strings[1]);
-        tv_detail.setText(strings[2]);
-        Glide.with(MyApplication.getContext ())
-                .load(strings[3])
-                .into(iv_cover);
+        if (strings[3].length ()!=0){
+            gbdf.GetSuccessful (strings[0],strings[1],strings[2],strings[3]);
+        }else {
+            gbdf.GetFailed ();
+        }
     }
 
 }

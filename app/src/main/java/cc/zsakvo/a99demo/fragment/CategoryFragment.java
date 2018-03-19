@@ -18,7 +18,7 @@ import cc.zsakvo.a99demo.listener.ItemClickListener;
  * Created by akvo on 2018/2/18.
  */
 
-public class CategoryFragment  extends BaseFragment implements ItemClickListener {
+public class CategoryFragment  extends BaseFragment {
 
     private RecyclerView recyclerView;
     private CategoryAdapter adapter;

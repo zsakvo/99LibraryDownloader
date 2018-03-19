@@ -39,7 +39,7 @@ import cc.zsakvo.a99demo.listener.ItemClickListener;
  * Created by akvo on 2018/2/19.
  */
 
-public class ArticleFragment extends BaseFragment implements ItemClickListener,View.OnClickListener{
+public class ArticleFragment extends BaseFragment implements View.OnClickListener{
 
     private RecyclerView recyclerView;
     private StateView mStateView;
