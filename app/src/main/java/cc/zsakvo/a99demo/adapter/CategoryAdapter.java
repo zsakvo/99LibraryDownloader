@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.robertlevonyan.views.chip.Chip;
 
 import org.w3c.dom.Text;
 
@@ -54,7 +53,6 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
 
     static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         private ItemClickListener mClickListener;
-        Chip chip;
         DisplayMetrics dm;
         TextView tv;
 

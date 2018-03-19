@@ -41,7 +41,6 @@ public class DownloadTask extends AsyncTask<int[],Integer,Integer> {
         int p = 1;
         for (int i:integers){
             String url = hostURL +bookID+"/"+i+".htm";
-            Log.e ( "doInBackground: ", i+"-^^^");
             if (i==0){
                 continue;
             }
