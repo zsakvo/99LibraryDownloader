@@ -76,6 +76,7 @@ public class GetDownloadInfoTask extends AsyncTask<Object,Integer,DownloadDetail
         } catch (IOException e) {
             e.printStackTrace ();
         }
+        Log.e ( "doInBackground: ",bookID+"\n"+bookName+"\n"+bookAuthor+"\n"+ bookCoverURL);
         return new DownloadDetails (bookID,
                 bookName,
                 bookAuthor,

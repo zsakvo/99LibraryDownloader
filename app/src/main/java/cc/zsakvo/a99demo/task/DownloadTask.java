@@ -56,6 +56,11 @@ public class DownloadTask extends AsyncTask<int[],Integer,Integer> {
     protected void onProgressUpdate(Integer...integers){
         super.onProgressUpdate (integers);
         du.addProgress (allNum);
+    }
+
+    @Override
+    protected void onPostExecute(Integer integer){
+        super.onPostExecute (integer);
         onDataFinishedListener.onDownloadFinishedNum (this.downloadsNum);
     }
 }

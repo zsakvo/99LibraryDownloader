@@ -330,6 +330,7 @@ public class EpubUtils {
     private List<String> chapters;
     private List<String> titles;
     private int chapterNums = 0;
+    private getResult gr;
     int threadNum = 4;
 
     public Boolean getOthersOK() {
@@ -351,13 +352,18 @@ public class EpubUtils {
     private Boolean isOthersOK;
     private Boolean isChaptersOK;
 
-    public EpubUtils(String bookID, String bookName, String bookAuthor, String bookCoverURL, List<String> chapters, List<String> titles){
+    public interface getResult{
+        void isGenerOk(int i);
+    }
+
+    public EpubUtils(String bookID, String bookName, String bookAuthor, String bookCoverURL, List<String> chapters, List<String> titles,getResult gr){
         this.bookID = bookID;
         this.bookName = bookName;
         this.bookAuthor = bookAuthor;
         this.bookCoverURL = bookCoverURL;
         this.chapters = chapters;
         this.titles = titles;
+        this.gr = gr;
         chapterNums = chapters.size();
         cachePath = Environment.getExternalStorageDirectory().getPath()+"/99lib/cache/"+bookID;
         new File(cachePath).mkdirs();
@@ -477,6 +483,7 @@ public class EpubUtils {
     private void packageEpub(){
         ZipUtil.pack(new File(cachePath), new File(sdPath+bookName+".epub"), new NameMapper() {
             public String map(String name) {
+                gr.isGenerOk (1);
                 return name;
             }
         });

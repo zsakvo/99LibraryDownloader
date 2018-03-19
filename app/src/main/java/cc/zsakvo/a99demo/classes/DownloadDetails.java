@@ -7,6 +7,7 @@ import java.util.List;
  */
 
 public class DownloadDetails {
+
     public String getBookID() {
         return bookID;
     }
@@ -40,6 +41,11 @@ public class DownloadDetails {
     private String bookAuthor;
     private String bookCoverURL;
     private List<String> titles;
+
+    public void setChapters(List<String> chapters) {
+        this.chapters = chapters;
+    }
+
     private List<String> chapters;
     private List<Integer> chapterIDs;
 

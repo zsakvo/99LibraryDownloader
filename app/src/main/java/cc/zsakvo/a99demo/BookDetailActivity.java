@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import org.jsoup.nodes.Document;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import cc.zsakvo.a99demo.classes.DownloadDetails;
@@ -28,11 +30,12 @@ import cc.zsakvo.a99demo.task.DownloadTask;
 import cc.zsakvo.a99demo.task.GetDownloadInfoTask;
 import cc.zsakvo.a99demo.task.GetBookDetailTask;
 import cc.zsakvo.a99demo.utils.DialogUtils;
+import cc.zsakvo.a99demo.utils.EpubUtils;
 import cc.zsakvo.a99demo.utils.SplitUtil;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
-public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener {
+public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener,EpubUtils.getResult{
 
     Toolbar toolbar;
     String title,intro,detail,coverUrl;
@@ -46,9 +49,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     ConcurrentHashMap<Integer,String> ch = new ConcurrentHashMap<> ();
     private int nowNum;
     private int allNum;
+    private List<Integer> chapterIDs;
+    private List<String> chapters;
     DialogUtils du;
-
-
     DownloadDetails downloadDetails = null;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -149,7 +152,9 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onDataSuccessfully(DownloadDetails downloadDetails) {
-        allNum = downloadDetails.getChapterIDs ().size ();
+        this.downloadDetails = downloadDetails;
+        chapterIDs = downloadDetails.getChapterIDs ();
+        allNum = chapterIDs.size ();
         du.setAllNum (allNum);
         for (int[] integers:SplitUtil.splitChaIDsByNum (downloadDetails.getChapterIDs (),3)){
             new DownloadTask (downloadDetails.getBookID (),
@@ -170,8 +175,27 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onDownloadFinishedNum(int num){
         nowNum+=num;
+        chapters = new ArrayList<> ();
         if (nowNum>=allNum){
             du.setDialogTitle ("正在写出数据……");
+            for (int id:chapterIDs){
+                chapters.add (ch.get (id));
+            }
+            new EpubUtils (downloadDetails.getBookID (),
+                    downloadDetails.getBookName (),
+                    downloadDetails.getBookAuthor (),
+                    downloadDetails.getBookCoverURL (),
+                    chapters,
+                    downloadDetails.getTitles (),
+                    this).generateEpub ();
+        }
+    }
+
+    @Override
+    public void isGenerOk(int i) {
+        if (i==1){
+            du.concelDialog ();
+            Snackbar.make (fab,"书籍下载完毕！",Snackbar.LENGTH_LONG).show ();
         }
     }
 }
