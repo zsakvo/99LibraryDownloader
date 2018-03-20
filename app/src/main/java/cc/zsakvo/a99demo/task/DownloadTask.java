@@ -22,14 +22,16 @@ public class DownloadTask extends AsyncTask<int[],Integer,Integer> {
     private DialogUtils du;
     private int allNum;
     private int nowNum;
+    private int type;
     private OnDataFinishedListener onDataFinishedListener;
 
-    public DownloadTask(String bookID, ConcurrentHashMap<Integer,String> ch, DialogUtils du,int allNum,int nowNum,OnDataFinishedListener onDataFinishedListener){
+    public DownloadTask(String bookID, ConcurrentHashMap<Integer,String> ch, DialogUtils du,int allNum,int nowNum,int type,OnDataFinishedListener onDataFinishedListener){
         this.bookID = bookID;
         this.ch = ch;
         this.du = du;
         this.allNum = allNum;
         this.nowNum = nowNum;
+        this.type = type;
         this.onDataFinishedListener = onDataFinishedListener;
     }
 
@@ -44,7 +46,7 @@ public class DownloadTask extends AsyncTask<int[],Integer,Integer> {
             if (i==0){
                 continue;
             }
-            ch.put (i,DecodeUtils.url (url));
+            ch.put (i,DecodeUtils.url (url,type));
             publishProgress();
         }
         nowNum+=integers.length;

@@ -66,7 +66,7 @@ public class ArticleActivity extends AppCompatActivity {
             try {
 //                Document doc = Jsoup.connect(url).timeout(20000).get();
 //                Element e = doc.getElementById("content");
-                content = DecodeUtils.url (url);
+                content = DecodeUtils.url (url,1);
 //                e.select ("a").remove ();
 //
 //                content = doc.getElementById("content").html();

@@ -25,10 +25,12 @@ public class DecodeUtils {
 
         private String url;
         private String title;
+        private int type;
         String client = "";
         Element content;
 
-        String getContent(String url){
+        String getContent(String url,int type){
+            this.type = type;
             try {
                 this.url = url;
                 Document doc = Jsoup.connect(url).timeout(13000).get();
@@ -59,7 +61,20 @@ public class DecodeUtils {
                     break;
                 }
             }
-            return "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
+            String text = new String ();
+            switch (type){
+                case 0:
+                    text = this.title+"\n"+load(childNotes,star);
+                    break;
+                case 1:
+                    text = "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
+                    break;
+                default:
+                    text = this.title+"\n"+load(childNotes,star);
+                break;
+            }
+            return text;
+//            return "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
 //            return this.title+"\n"+load(childNotes,star);
         }
 
@@ -94,7 +109,15 @@ public class DecodeUtils {
             }
             for (int i =0;i<childNode.length;i++){
                 if (childNode[i]!=null) {
-                    content.append("<p class=\"a\">"+childNode[i].text()+"</p>\n");
+                    switch (type){
+                        case 0:
+                            content.append(childNode[i].text()+"\n");
+                            break;
+                        case 1:
+                            content.append("<p class=\"a\">"+childNode[i].text()+"</p>\n");
+                            break;
+                    }
+//                    content.append("<p class=\"a\">"+childNode[i].text()+"</p>\n");
                 }
             }
             return content.toString();
@@ -127,8 +150,8 @@ public class DecodeUtils {
         }
     };
 
-    public static String url(String url){
-        return new Decode99().getContent(url);
+    public static String url(String url,int type){
+        return new Decode99().getContent(url,type);
     }
 
 }

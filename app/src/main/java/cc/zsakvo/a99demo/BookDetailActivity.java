@@ -36,13 +36,14 @@ import cc.zsakvo.a99demo.phrase.Book;
 import cc.zsakvo.a99demo.task.DownloadTask;
 import cc.zsakvo.a99demo.task.GetDownloadInfoTask;
 import cc.zsakvo.a99demo.task.GetBookDetailTask;
+import cc.zsakvo.a99demo.task.OutPutTxtTask;
 import cc.zsakvo.a99demo.utils.DialogUtils;
 import cc.zsakvo.a99demo.utils.EpubUtils;
 import cc.zsakvo.a99demo.utils.SplitUtil;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
-public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener,EpubUtils.getResult,Interface.GetBookDetailFinish,OnRefreshListener{
+public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener,EpubUtils.getResult,Interface.GetBookDetailFinish,OnRefreshListener,Interface.OutPutTxtFinish{
 
     Toolbar toolbar;
     TextView tv_title,tv_intro,tv_detail;
@@ -55,6 +56,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private int nowNum;
     private int allNum;
     private List<Integer> chapterIDs;
+    private int whatGenerate = 0;
     DialogUtils du;
     DownloadDetails downloadDetails = null;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -128,6 +130,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                     du,
                     allNum,
                     nowNum,
+                    whatGenerate,
                     this)
                     .executeOnExecutor (THREAD_POOL_EXECUTOR,integers);
         }
@@ -147,13 +150,24 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             for (int id:chapterIDs){
                 chapters.add (ch.get (id));
             }
-            new EpubUtils (downloadDetails.getBookID (),
-                    downloadDetails.getBookName (),
-                    downloadDetails.getBookAuthor (),
-                    downloadDetails.getBookCoverURL (),
-                    chapters,
-                    downloadDetails.getTitles (),
-                    this).generateEpub ();
+            switch (whatGenerate){
+                case 0:
+                    StringBuilder sb = new StringBuilder ();
+                    for (String s:chapters){
+                        sb.append (s);
+                    }
+                    new OutPutTxtTask (downloadDetails.getBookName (),this).execute (sb.toString ());
+                    break;
+                case 1:
+                    new EpubUtils (downloadDetails.getBookID (),
+                            downloadDetails.getBookName (),
+                            downloadDetails.getBookAuthor (),
+                            downloadDetails.getBookCoverURL (),
+                            chapters,
+                            downloadDetails.getTitles (),
+                            this).generateEpub ();
+                    break;
+            }
         }
     }
 
@@ -179,11 +193,26 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         Glide.with(this)
                 .load(strings[3])
                 .into(iv_cover);
-        refreshLayout.finishRefresh (1000);
+        refreshLayout.finishRefresh (500);
     }
 
     @Override
     public void onRefresh(RefreshLayout refreshlayout) {
         new GetBookDetailTask (this).execute (url);
+    }
+
+    @Override
+    public void outPutFailed() {
+
+    }
+
+    @Override
+    public void outPutSuccess(int i) {
+        switch (i){
+            case 1:
+                du.concelDialog ();
+                Snackbar.make (toolbar,"书籍下载完毕！",Snackbar.LENGTH_LONG).show ();
+                break;
+        }
     }
 }

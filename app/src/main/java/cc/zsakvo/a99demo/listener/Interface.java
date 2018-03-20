@@ -18,4 +18,9 @@ public class Interface {
         void GetFailed();
         void GetSuccessful(String...strings);
     }
+
+    public interface OutPutTxtFinish{
+        void outPutFailed();
+        void outPutSuccess(int i);
+    }
 }

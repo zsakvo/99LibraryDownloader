@@ -68,12 +68,6 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
     public View bindLayout(LayoutInflater layoutInflater){
         mRootView = layoutInflater.inflate(R.layout.fragment_99lib,null);
         mStateView = StateView.inject(mRootView, true);
-//        recyclerView = mRootView.findViewById(R.id.nn_novel_list);
-//        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-//        recyclerView.setLayoutManager(layoutManager);
-//        adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
-//        adapter.setOnItemClickListener(BookStoreFragment.this);
-//        recyclerView.setAdapter(adapter);
         return mRootView;
     }
 
@@ -134,9 +128,9 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
         this.listDetails.addAll (listDetails);
         adapter.notifyDataSetChanged ();
         if (refreshLayout.isRefreshing ()){
-            refreshLayout.finishRefresh (2000);
+            refreshLayout.finishRefresh (500);
         }else {
-            refreshLayout.finishLoadmore (2000);
+            refreshLayout.finishLoadmore (500);
         }
     }
 
@@ -144,9 +138,9 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
     public void booksGetFailed(){
         refreshLayout.finishLoadmoreWithNoMoreData ();
         if (refreshLayout.isRefreshing ()){
-            refreshLayout.finishRefresh (2000);
+            refreshLayout.finishRefresh (500);
         }else {
-            refreshLayout.finishLoadmore (2000);
+            refreshLayout.finishLoadmore (500);
         }
         Snackbar.make (fab,"数据获取失败，请检查网络连接或重试",Snackbar.LENGTH_LONG).show ();
     }

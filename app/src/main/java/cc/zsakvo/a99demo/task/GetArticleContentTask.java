@@ -28,7 +28,7 @@ public class GetArticleContentTask extends AsyncTask<String, Integer,String> {
 
     @Override
     protected String doInBackground(String ... params) {
-        return DecodeUtils.url (params[0]);
+        return DecodeUtils.url (params[0],1);
     }
 
     @Override
