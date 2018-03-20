@@ -323,6 +323,7 @@ public class EpubUtils {
 
     private String sdPath = Environment.getExternalStorageDirectory().getPath()+"/99lib/";
     private String cachePath;
+    private String bookPath;
     private String bookID;
     private String bookName;
     private String bookAuthor;
@@ -366,7 +367,11 @@ public class EpubUtils {
         this.gr = gr;
         chapterNums = chapters.size();
         cachePath = Environment.getExternalStorageDirectory().getPath()+"/99lib/cache/"+bookID;
+        bookPath = Environment.getExternalStorageDirectory().getPath()+"/99lib/Epub/";
         new File(cachePath).mkdirs();
+        if (!new File(bookPath).exists ()){
+            new File(bookPath).mkdirs ();
+        }
     }
 
     private void writeStr(String path,String str){
@@ -481,9 +486,10 @@ public class EpubUtils {
     }
 
     private void packageEpub(){
-        ZipUtil.pack(new File(cachePath), new File(sdPath+bookName+".epub"), new NameMapper() {
+        ZipUtil.pack(new File(cachePath), new File(bookPath+bookName+".epub"), new NameMapper() {
             public String map(String name) {
                 gr.isGenerOk (1);
+                new File (cachePath).delete ();
                 return name;
             }
         });

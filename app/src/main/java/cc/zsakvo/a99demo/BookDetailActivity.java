@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -46,10 +47,11 @@ import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener,EpubUtils.getResult,Interface.GetBookDetailFinish,OnRefreshListener,Interface.OutPutTxtFinish{
 
     Toolbar toolbar;
-    TextView tv_title,tv_intro,tv_detail;
+    TextView tv_title,tv_intro,tv_detail,tv_dlTXT,tv_dlEpub;
     ImageView iv_cover;
     RefreshLayout refreshLayout;
     String url;
+    CardView cv;
     FloatingActionButton fab;
     Dialog loadingDialog;
     ConcurrentHashMap<Integer,String> ch = new ConcurrentHashMap<> ();
@@ -67,10 +69,10 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_detail);
+        setContentView(R.layout.n_activity_book_detail);
         toolbar = (Toolbar)findViewById(R.id.bdToolBar);
-        fab = (FloatingActionButton)findViewById(R.id.bdFab);
-        fab.setOnClickListener(this);
+//        fab = (FloatingActionButton)findViewById(R.id.bdFab);
+//        fab.setOnClickListener(this);
         toolbar.setTitle("书籍详情");
         url = getIntent().getStringExtra("url");
         tv_title = (TextView)findViewById(R.id.bdTitle);
@@ -79,6 +81,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         iv_cover = (ImageView)findViewById(R.id.bdCover);
         du = new DialogUtils (this,loadingDialog);
 
+        cv = (CardView)findViewById (R.id.dl_card);
+        tv_dlTXT = (TextView)findViewById (R.id.dl_txt);
+        tv_dlTXT.setOnClickListener (this);
+        tv_dlEpub = (TextView)findViewById (R.id.dl_epub);
+        tv_dlEpub.setOnClickListener (this);
+
         refreshLayout = (RefreshLayout) findViewById (R.id.bdRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setEnableAutoLoadmore (true);
@@ -86,15 +94,25 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         refreshLayout.autoRefresh ();
     }
 
+    private void beginDownload(){
+        nowNum = 0;
+        verifyStoragePermissions(BookDetailActivity.this);
+        GetDownloadInfoTask gdi = new GetDownloadInfoTask (du);
+        gdi.setOnDataFinishedListener (this);
+        gdi.execute (url);
+    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.bdFab:
-                verifyStoragePermissions(BookDetailActivity.this);
-                GetDownloadInfoTask gdi = new GetDownloadInfoTask (du);
-                gdi.setOnDataFinishedListener (this);
-                gdi.execute (url);
+            case R.id.dl_txt:
+                whatGenerate = 0;
+                beginDownload();
+                break;
+            case R.id.dl_epub:
+                whatGenerate = 1;
+                beginDownload();
+                break;
         }
     }
 
@@ -175,14 +193,14 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     public void isGenerOk(int i) {
         if (i==1){
             du.concelDialog ();
-            Snackbar.make (fab,"书籍下载完毕！",Snackbar.LENGTH_LONG).show ();
+            Snackbar.make (toolbar,"书籍下载完毕！",Snackbar.LENGTH_LONG).show ();
         }
     }
 
     @Override
     public void GetFailed() {
         refreshLayout.finishRefresh (false);
-        Snackbar.make (fab,"数据获取失败，请检查网络连接或重试",Snackbar.LENGTH_LONG).show ();
+        Snackbar.make (toolbar,"数据获取失败，请检查网络连接或重试",Snackbar.LENGTH_LONG).show ();
     }
 
     @Override
@@ -193,6 +211,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         Glide.with(this)
                 .load(strings[3])
                 .into(iv_cover);
+        cv.setVisibility (View.VISIBLE);
+        cv.bringToFront ();
         refreshLayout.finishRefresh (500);
     }
 

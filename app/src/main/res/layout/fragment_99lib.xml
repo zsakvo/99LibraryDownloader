@@ -8,7 +8,9 @@
     android:id="@+id/refreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+    <com.scwang.smartrefresh.header.MaterialHeader
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coord"
         android:layout_below="@id/tabLayout"

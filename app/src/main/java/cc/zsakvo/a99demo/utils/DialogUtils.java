@@ -33,9 +33,7 @@ public class DialogUtils {
     }
 
     public void initDialog(){
-        if (dialog!=null&&dialog.isShowing ()){
-
-        }else {
+        progress = 0;
             LayoutInflater inflater = LayoutInflater.from (context);
             View v = inflater.inflate (R.layout.dialog, null); // 得到加载view
             DisplayMetrics displaymetrics = new DisplayMetrics ();
@@ -49,7 +47,6 @@ public class DialogUtils {
                     LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT));
             dialog.show ();
-        }
     }
 
     public void setDialogTitle(String title){
