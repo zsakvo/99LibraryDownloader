@@ -1,5 +1,7 @@
 package cc.zsakvo.a99demo.listener;
 
+import android.graphics.Bitmap;
+
 import java.util.List;
 
 import cc.zsakvo.a99demo.classes.BookList;
@@ -22,5 +24,9 @@ public class Interface {
     public interface OutPutTxtFinish{
         void outPutFailed();
         void outPutSuccess(int i);
+    }
+
+    public interface GetCover{
+        void GetCoverOK(Bitmap bitmap);
     }
 }

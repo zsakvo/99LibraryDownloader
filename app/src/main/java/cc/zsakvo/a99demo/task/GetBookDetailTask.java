@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -24,19 +23,11 @@ import cc.zsakvo.a99demo.utils.SplitUtil;
 
 public class GetBookDetailTask extends AsyncTask<String,Void,String[]>{
 
-    private TextView tv_title;
-    private TextView tv_intro;
-    private TextView tv_detail;
-    private ImageView iv_cover;
     private Interface.GetBookDetailFinish gbdf;
 
 
 
     public GetBookDetailTask(Interface.GetBookDetailFinish gbdf){
-        this.tv_title = tv_title;
-        this.tv_intro = tv_intro;
-        this.tv_detail = tv_detail;
-        this.iv_cover = iv_cover;
         this.gbdf = gbdf;
     }
 

@@ -3,6 +3,7 @@ package cc.zsakvo.a99demo;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -19,7 +20,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -39,6 +39,7 @@ import cc.zsakvo.a99demo.task.DownloadTask;
 import cc.zsakvo.a99demo.task.GetDownloadInfoTask;
 import cc.zsakvo.a99demo.task.GetBookDetailTask;
 import cc.zsakvo.a99demo.task.OutPutTxtTask;
+import cc.zsakvo.a99demo.task.SetCoverTask;
 import cc.zsakvo.a99demo.utils.DialogUtils;
 import cc.zsakvo.a99demo.utils.EpubUtils;
 import cc.zsakvo.a99demo.utils.SplitUtil;
@@ -221,12 +222,18 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_title.setText (strings[0]);
         tv_intro.setText (strings[1]);
         tv_detail.setText (strings[2]);
-        Glide.with(this)
-                .load(strings[3])
-                .into(iv_cover);
-        cv.setVisibility (View.VISIBLE);
-        cv.bringToFront ();
-        refreshLayout.finishRefresh (500);
+//        Glide.with(this)
+//                .load(strings[3])
+//                .into(iv_cover);
+        new SetCoverTask (new Interface.GetCover () {
+            @Override
+            public void GetCoverOK(Bitmap bitmap) {
+                iv_cover.setImageBitmap (bitmap);
+                cv.setVisibility (View.VISIBLE);
+                cv.bringToFront ();
+                refreshLayout.finishRefresh (500);
+            }
+        }).execute (strings[3]);
     }
 
     @Override
