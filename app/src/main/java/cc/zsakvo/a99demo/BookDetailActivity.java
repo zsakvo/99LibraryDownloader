@@ -76,11 +76,11 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.n_activity_book_detail);
         toolbar = (Toolbar)findViewById(R.id.bdToolBar);
-//        fab = (FloatingActionButton)findViewById(R.id.bdFab);
-//        fab.setOnClickListener(this);
         toolbar.setTitle("书籍详情");
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar ().setDisplayHomeAsUpEnabled (true);
+        }
         url = getIntent().getStringExtra("url");
         tv_title = (TextView)findViewById(R.id.bdTitle);
         tv_intro = (TextView)findViewById(R.id.bdIntro);
@@ -225,9 +225,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_title.setText (strings[0]);
         tv_intro.setText (strings[1]);
         tv_detail.setText (strings[2]);
-//        Glide.with(this)
-//                .load(strings[3])
-//                .into(iv_cover);
         new SetCoverTask (new Interface.GetCover () {
             @Override
             public void GetCoverOK(Bitmap bitmap) {
@@ -264,7 +261,6 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     protected void onDestroy(){
-        //you may call the cancel() method but if it is not handled in doInBackground() method
         if (gbd != null && gbd.getStatus() != AsyncTask.Status.FINISHED)
             gbd.cancel(true);
         super.onDestroy();

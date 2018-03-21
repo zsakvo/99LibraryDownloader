@@ -61,7 +61,7 @@ public class GetBookDetailTask extends AsyncTask<String,Void,String[]>{
 
         if (isCancelled())
         {
-            return (null); // don't forget to terminate this method
+            return (null);
         }
 
         return new String[]{title,intro,detail,coverUrl};
