@@ -8,27 +8,23 @@
     android:id="@+id/arefreshLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <android.support.design.widget.CoordinatorLayout
-        android:id="@+id/acoord"
-        android:layout_below="@id/tabLayout"
+    <com.scwang.smartrefresh.header.MaterialHeader
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"/>
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/nn_article_list">
         </android.support.v7.widget.RecyclerView>
 
-    </android.support.design.widget.CoordinatorLayout>
-
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/afab"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_arrow_up"/>
+
+    <!--<android.support.design.widget.FloatingActionButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/afab"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_margin="16dp"-->
+        <!--android:src="@drawable/ic_arrow_up"/>-->
 </RelativeLayout>

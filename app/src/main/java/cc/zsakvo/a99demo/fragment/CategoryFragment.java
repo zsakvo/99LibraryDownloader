@@ -52,7 +52,6 @@ public class CategoryFragment  extends BaseFragment {
 
     @Override
     public void initView() {
-
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
 //        System.out.println("aaa");
     }

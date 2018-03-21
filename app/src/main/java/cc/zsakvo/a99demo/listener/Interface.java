@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 
 import java.util.List;
 
+import cc.zsakvo.a99demo.classes.ArticleList;
 import cc.zsakvo.a99demo.classes.BookList;
 
 /**
@@ -28,5 +29,10 @@ public class Interface {
 
     public interface GetCover{
         void GetCoverOK(Bitmap bitmap);
+    }
+
+    public interface GetArticleList{
+        void GetOK(List<ArticleList> listDetails,int totalPages);
+        void GetFailed();
     }
 }
