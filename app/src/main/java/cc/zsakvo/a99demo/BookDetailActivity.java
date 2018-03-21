@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -74,6 +75,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 //        fab = (FloatingActionButton)findViewById(R.id.bdFab);
 //        fab.setOnClickListener(this);
         toolbar.setTitle("书籍详情");
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         url = getIntent().getStringExtra("url");
         tv_title = (TextView)findViewById(R.id.bdTitle);
         tv_intro = (TextView)findViewById(R.id.bdIntro);
@@ -188,6 +191,16 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             }
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            finish ();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void isGenerOk(int i) {
