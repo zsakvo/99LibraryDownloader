@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -13,6 +14,7 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -61,6 +63,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private int allNum;
     private List<Integer> chapterIDs;
     private int whatGenerate = 0;
+    private Boolean loadOK = false;
     DialogUtils du;
     DownloadDetails downloadDetails = null;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
@@ -236,9 +239,12 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         }).execute (strings[3]);
     }
 
+    GetBookDetailTask gbd;
+
     @Override
     public void onRefresh(RefreshLayout refreshlayout) {
-        new GetBookDetailTask (this).execute (url);
+        gbd = new GetBookDetailTask (this);
+        gbd.execute (url);
     }
 
     @Override
@@ -254,5 +260,13 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 Snackbar.make (toolbar,"书籍下载完毕！",Snackbar.LENGTH_LONG).show ();
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy(){
+        //you may call the cancel() method but if it is not handled in doInBackground() method
+        if (gbd != null && gbd.getStatus() != AsyncTask.Status.FINISHED)
+            gbd.cancel(true);
+        super.onDestroy();
     }
 }

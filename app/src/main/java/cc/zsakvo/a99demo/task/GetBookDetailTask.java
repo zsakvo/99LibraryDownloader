@@ -58,6 +58,12 @@ public class GetBookDetailTask extends AsyncTask<String,Void,String[]>{
         } catch (IOException e) {
             e.printStackTrace ();
         }
+
+        if (isCancelled())
+        {
+            return (null); // don't forget to terminate this method
+        }
+
         return new String[]{title,intro,detail,coverUrl};
     }
 
