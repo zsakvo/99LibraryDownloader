@@ -35,4 +35,8 @@ public class Interface {
         void GetOK(List<ArticleList> listDetails,int totalPages);
         void GetFailed();
     }
+
+    public interface GetArticle{
+        void GetResult(Boolean result);
+    }
 }
