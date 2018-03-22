@@ -64,13 +64,13 @@ public class DecodeUtils {
             String text = new String ();
             switch (type){
                 case 0:
-                    text = this.title+"\n"+load(childNotes,star);
+                    text = this.title+"\n"+"  "+load(childNotes,star)+"\n\n\n";
                     break;
                 case 1:
                     text = "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
                     break;
                 default:
-                    text = this.title+"\n"+load(childNotes,star);
+                    text = this.title+"\n\n"+"  "+load(childNotes,star)+"\n\n\n";
                 break;
             }
             return text;
