@@ -25,8 +25,7 @@
         <activity android:name=".BookDetailActivity" />
         <activity android:name=".SearchActivity" />
         <activity android:name=".CategoryActivity" />
-        <activity android:name=".ArticleActivity" />
-        <activity android:name=".DemoActivity"></activity>
+        <activity android:name=".ArticleActivity"></activity>
     </application>
 
 </manifest>

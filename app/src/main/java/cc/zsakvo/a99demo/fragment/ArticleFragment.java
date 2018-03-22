@@ -1,15 +1,10 @@
 package cc.zsakvo.a99demo.fragment;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -19,24 +14,14 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import cc.zsakvo.a99demo.ArticleActivity;
-import cc.zsakvo.a99demo.CategoryActivity;
-import cc.zsakvo.a99demo.DemoActivity;
 import cc.zsakvo.a99demo.R;
 import cc.zsakvo.a99demo.adapter.ArticleAdapter;
 import cc.zsakvo.a99demo.classes.ArticleList;
-import cc.zsakvo.a99demo.classes.BookList;
 import cc.zsakvo.a99demo.listener.Interface;
-import cc.zsakvo.a99demo.listener.ItemClickListener;
 import cc.zsakvo.a99demo.task.GetArticleListTask;
 
 /**
@@ -71,7 +56,7 @@ public class ArticleFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onItemClick(View view, int postion) {
         String url = String.valueOf(listDetails.get(postion).getArticleUrl());
-        Intent intent = new Intent (getActivity (), DemoActivity.class);
+        Intent intent = new Intent (getActivity (), ArticleActivity.class);
         intent.putExtra ("title",listDetails.get(postion).getArticleName ());
         intent.putExtra ("url",url);
         startActivity (intent);

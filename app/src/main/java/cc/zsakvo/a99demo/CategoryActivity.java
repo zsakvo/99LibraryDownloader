@@ -62,6 +62,9 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
         fab.setOnClickListener(this);
         setSupportActionBar(toolbar);
         toolbar.setTitle("分类目录");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar ().setDisplayHomeAsUpEnabled (true);
+        }
         recyclerView = (RecyclerView)findViewById(R.id.c_novel_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -148,5 +151,14 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
             default:
                 break;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            finish ();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
