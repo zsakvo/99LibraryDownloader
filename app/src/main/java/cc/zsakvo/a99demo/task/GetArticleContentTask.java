@@ -17,7 +17,7 @@ import cc.zsakvo.a99demo.utils.DecodeUtils;
  * Created by akvo on 2018/2/21.
  */
 
-public class GetArticleContentTask extends AsyncTask<String, Integer,String[]> {
+public class GetArticleContentTask extends AsyncTask<String, Integer,String> {
 
     private TextView textView;
     private Toolbar toolbar;
@@ -33,27 +33,22 @@ public class GetArticleContentTask extends AsyncTask<String, Integer,String[]> {
 
 
     @Override
-    protected String[] doInBackground(String ... params) {
-        String content =  DecodeUtils.url (params[0],1);
+    protected String doInBackground(String ... params) {
+        String content =  DecodeUtils.url (params[0],2);
         if (content==null){
-            return new String[]{null,null};
+            return null;
         }else {
-            Document doc = Jsoup.parse (content);
-            String title = doc.getElementById ("title").text ();
-            content = content.replace ("<h2 id=\"title\" class=\"titlel2std\">" + title + "</h2>", "");
-            return new String[]{title, content};
+            return content;
         }
     }
 
     @Override
-    protected void onPostExecute(String[] strings){
-        super.onPostExecute (strings);
-        if (strings[0]==null){
-//            mStateView.showEmpty ();
+    protected void onPostExecute(String string){
+        super.onPostExecute (string);
+        if (string==null){
             ga.GetResult (false);
         }else {
-            toolbar.setTitle (strings[0]);
-            RichText.fromHtml (strings[1]).into (textView);
+            RichText.fromHtml (string).into (textView);
             ga.GetResult (true);
         }
     }

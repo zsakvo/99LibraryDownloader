@@ -64,13 +64,15 @@ public class DecodeUtils {
             String text = new String ();
             switch (type){
                 case 0:
-                    text = this.title+"\n"+"  "+load(childNotes,star)+"\n\n\n";
+                    text = this.title+"\n\n"+load(childNotes,star)+"\n\n\n";
                     break;
                 case 1:
                     text = "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
                     break;
+                case 2:
+                    text = "<h2 id=\"title\" class=\"titlel2std\" style=\"text-align:center;\">"+this.title+"</h2>\n"+load(childNotes,star);
                 default:
-                    text = this.title+"\n\n"+"  "+load(childNotes,star)+"\n\n\n";
+                    text = this.title+"\n\n"+load(childNotes,star)+"\n\n\n";
                 break;
             }
             return text;
@@ -111,10 +113,13 @@ public class DecodeUtils {
                 if (childNode[i]!=null) {
                     switch (type){
                         case 0:
-                            content.append(childNode[i].text()+"\n");
+                            content.append("        "+childNode[i].text()+"\n");
                             break;
                         case 1:
                             content.append("<p class=\"a\">"+childNode[i].text()+"</p>\n");
+                            break;
+                        case 2:
+                            content.append("<p class=\"a\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+childNode[i].text()+"</p>\n");
                             break;
                     }
 //                    content.append("<p class=\"a\">"+childNode[i].text()+"</p>\n");
