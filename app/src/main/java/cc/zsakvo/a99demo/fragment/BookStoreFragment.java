@@ -47,7 +47,7 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
     private StateView mStateView;
     private List<BookList> listDetails = new ArrayList<>();
     cc.zsakvo.a99demo.adapter.ListAdapter adapter;
-    FloatingActionButton fab;
+//    FloatingActionButton fab;
     int page = 1;
     private RefreshLayout refreshLayout;
     private String baseURL = "http://www.99lib.net/book/index.php?page=";
@@ -74,8 +74,8 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void initView() {
         recyclerView = mRootView.findViewById(R.id.nn_novel_list);
-        fab = (FloatingActionButton)mRootView.findViewById(R.id.fab);
-        fab.setOnClickListener(this);
+//        fab = (FloatingActionButton)mRootView.findViewById(R.id.fab);
+//        fab.setOnClickListener(this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
@@ -104,9 +104,9 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.fab:
-                recyclerView.setAdapter (adapter);
-                break;
+//            case R.id.fab:
+//                recyclerView.setAdapter (adapter);
+//                break;
         }
     }
 
@@ -114,6 +114,7 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
     public void onRefresh(RefreshLayout refreshlayout) {
         page = 1;
         listDetails.clear ();
+        recyclerView.setAdapter (adapter);
         new GetBookListTask (BookStoreFragment.this).execute (baseURL+page);
     }
 
@@ -142,6 +143,6 @@ public class BookStoreFragment extends BaseFragment implements View.OnClickListe
         }else {
             refreshLayout.finishLoadmore (500);
         }
-        Snackbar.make (fab,"数据获取失败，请检查网络连接或重试",Snackbar.LENGTH_LONG).show ();
+        Snackbar.make (recyclerView,"数据获取失败，请检查网络连接或重试",Snackbar.LENGTH_LONG).show ();
     }
 }

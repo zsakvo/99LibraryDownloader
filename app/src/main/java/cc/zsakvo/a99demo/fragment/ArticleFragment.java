@@ -98,6 +98,8 @@ public class ArticleFragment extends BaseFragment implements View.OnClickListene
     @Override
     public void onRefresh(RefreshLayout refreshlayout) {
         page = 1;
+        listDetails.clear ();
+        recyclerView.setAdapter (adapter);
         new GetArticleListTask (this).execute (baseUrl+page);
     }
 
