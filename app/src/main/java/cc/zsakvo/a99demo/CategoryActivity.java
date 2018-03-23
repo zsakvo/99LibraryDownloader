@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import cc.zsakvo.a99demo.classes.BookList;
 import cc.zsakvo.a99demo.classes.DownloadDetails;
+import cc.zsakvo.a99demo.listener.Interface;
 import cc.zsakvo.a99demo.listener.ItemClickListener;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.task.GetCategoryListTask;
@@ -37,7 +39,7 @@ import cc.zsakvo.a99demo.task.GetSearchListTask;
 import km.lmy.searchview.SearchView;
 
 
-public class CategoryActivity extends AppCompatActivity implements ItemClickListener,View.OnClickListener{
+public class CategoryActivity extends AppCompatActivity implements ItemClickListener,View.OnClickListener,OnRefreshListener,OnLoadmoreListener,Interface.GetCategoryList{
 
     private RecyclerView recyclerView;
     Toolbar toolbar;
@@ -49,7 +51,9 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
     Boolean isInit;
     int totalPage = 1;
     String str;
-    String url;
+    String baseUrl = "http://www.99lib.net/book/index.php?type=";
+    String Url;
+    RefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +61,9 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
         setContentView(R.layout.activity_category);
         this.str = getIntent().getStringExtra("url");
         toolbar = (Toolbar)findViewById(R.id.c_toolBar);
-        fab = (FloatingActionButton)findViewById(R.id.c_fab);
+//        fab = (FloatingActionButton)findViewById(R.id.c_fab);
         toolbar.setTitle(str);
-        fab.setOnClickListener(this);
+//        fab.setOnClickListener(this);
         setSupportActionBar(toolbar);
         toolbar.setTitle("分类目录");
         if (getSupportActionBar() != null) {
@@ -71,29 +75,32 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
         adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
         adapter.setOnItemClickListener(CategoryActivity.this);
         recyclerView.setAdapter(adapter);
-        searchBook();
-        RefreshLayout refreshLayout = (RefreshLayout)findViewById(R.id.c_refreshLayout);
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                page = 1;
-                searchBook();
-                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
-            }
-        });
-        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-                if (page<totalPage) {
-                    page++;
-                    searchBook();
-                    refreshlayout.finishLoadmore(2000/*,false*/);//传入false表示加载失败
-                }else {
-                    Snackbar.make(fab,"已经是最后一页了啦!",Snackbar.LENGTH_LONG).show();
-                    refreshlayout.finishLoadmore(false/*,false*/);//传入false表示加载失败
-                }
-            }
-        });
+        refreshLayout = (RefreshLayout)findViewById(R.id.c_refreshLayout);
+//        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
+//            @Override
+//            public void onRefresh(RefreshLayout refreshlayout) {
+//                page = 1;
+//                searchBook();
+//                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
+//            }
+//        });
+//        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
+//            @Override
+//            public void onLoadmore(RefreshLayout refreshlayout) {
+//                if (page<totalPage) {
+//                    page++;
+//                    searchBook();
+//                    refreshlayout.finishLoadmore(2000/*,false*/);//传入false表示加载失败
+//                }else {
+//                    Snackbar.make(fab,"已经是最后一页了啦!",Snackbar.LENGTH_LONG).show();
+//                    refreshlayout.finishLoadmore(false/*,false*/);//传入false表示加载失败
+//                }
+//            }
+//        });
+        refreshLayout.setOnRefreshListener (this);
+        refreshLayout.setOnLoadmoreListener (this);
+        MaterialHeader mMaterialHeader = (MaterialHeader) refreshLayout.getRefreshHeader ();
+        refreshLayout.autoRefresh ();
     }
 
     private void initView(){
@@ -107,29 +114,9 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
 
     private void searchBook(){
         toolbar.setTitle(str);
-        String url = "http://www.99lib.net/book/index.php?type="+str+"&page="+page;
-        GetCategoryListTask gct = new GetCategoryListTask (totalPage, listDetails, adapter);
-        gct.setOnDataFinishedListener (new OnDataFinishedListener () {
-            @Override
-            public void onDataSuccessfully(Object data) {
-                totalPage = (int)data;
-            }
-
-            @Override
-            public void onDataSuccessfully(DownloadDetails data) {
-
-            }
-
-            @Override
-            public void onDataFailed() {
-
-            }
-            @Override
-            public void onDownloadFinishedNum(int num){
-
-            }
-        });
-        gct.execute (url,page);
+        Url = baseUrl+str+"&page="+page;
+        GetCategoryListTask gct = new GetCategoryListTask (totalPage, listDetails, adapter,this);
+        gct.execute (Url,page);
         }
 
     @Override
@@ -143,11 +130,11 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.c_fab:
-                adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
-                adapter.setOnItemClickListener(CategoryActivity.this);
-                recyclerView.setAdapter(adapter);
-                break;
+//            case R.id.c_fab:
+//                adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
+//                adapter.setOnItemClickListener(CategoryActivity.this);
+//                recyclerView.setAdapter(adapter);
+//                break;
             default:
                 break;
         }
@@ -160,5 +147,41 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onLoadmore(RefreshLayout refreshlayout) {
+        page++;
+        searchBook();
+    }
+
+    @Override
+    public void onRefresh(RefreshLayout refreshlayout) {
+        listDetails.clear ();
+        recyclerView.setAdapter (adapter);
+        page = 1;
+        searchBook();
+    }
+
+    @Override
+    public void GetOK(List<BookList> listDetails) {
+        this.listDetails.addAll (listDetails);
+        adapter.notifyDataSetChanged();
+        if (refreshLayout.isRefreshing ()){
+            refreshLayout.finishRefresh (500);
+        }else {
+            refreshLayout.finishLoadmore (500);
+        }
+    }
+
+    @Override
+    public void GetFailed() {
+        refreshLayout.finishLoadmoreWithNoMoreData ();
+        if (refreshLayout.isRefreshing ()){
+            refreshLayout.finishRefresh (false);
+        }else {
+            refreshLayout.finishLoadmore (false);
+        }
+        Snackbar.make (recyclerView,"数据获取失败，请检查网络连接或重试",Snackbar.LENGTH_LONG).show ();
     }
 }

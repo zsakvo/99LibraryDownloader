@@ -10,10 +10,12 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import cc.zsakvo.a99demo.adapter.ListAdapter;
 import cc.zsakvo.a99demo.classes.BookList;
+import cc.zsakvo.a99demo.listener.Interface;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.utils.SplitUtil;
 
@@ -21,34 +23,34 @@ import cc.zsakvo.a99demo.utils.SplitUtil;
  * Created by akvo on 2018/2/22.
  */
 
-public class GetSearchListTask extends AsyncTask<Object,Void,Integer> {
+public class GetSearchListTask extends AsyncTask<Object,Void,List<BookList>> {
     private int totalPage;
-    private List<BookList> listDetails;
-    private OnDataFinishedListener onDataFinishedListener;
-    private ListAdapter adapter;
-    private StateView mStateView;
-    public GetSearchListTask(int totalPage, List<BookList> listDetails, ListAdapter adapter,StateView mStateView){
-        this.totalPage = totalPage;
-        this.listDetails = listDetails;
-        this.adapter = adapter;
-        this.mStateView = mStateView;
+    private Interface.GetSearch gs;
+
+    public GetSearchListTask( Interface.GetSearch gs){
+        this.gs = gs;
     }
 
     @Override
-    protected Integer doInBackground(Object... objects) {
+    protected List<BookList> doInBackground(Object... objects) {
         String url = (String) objects[0];
         int page = (int) objects[1];
+        List<BookList> listDetails = new ArrayList<> ();
         try {
             Document doc = Jsoup.connect(url).timeout(20000).get();
             if (page==1){
                 listDetails.clear();
-                totalPage = (int) Math.ceil((double)Integer.parseInt(doc.selectFirst("strong").text())/15.0);
+                try {
+                    totalPage = (int) Math.ceil ((double) Integer.parseInt (doc.selectFirst ("strong").text ()) / 15.0);
+                }catch (Exception e){
+                    return null;
+                }
             }
             Element element = doc.selectFirst("ul.list_box");
             Elements ele_li = element.select("li");
             for (Element e:ele_li){
                 if (e.selectFirst("h2")==null){
-                    return 0;
+                    return null;
                 }
                 String title = e.selectFirst("h2").text();
                 String author = SplitUtil.splitElement(e.select("h4").get(0));
@@ -58,27 +60,25 @@ public class GetSearchListTask extends AsyncTask<Object,Void,Integer> {
                 String book_url = "http://www.99lib.net"+e.selectFirst("a").attr("href");
                 listDetails.add(new BookList(title,author+"\n"+category+"\n"+label,intro,book_url));
             }
-            return 1;
+            if (isCancelled())
+            {
+                return (null);
+            }
+            return listDetails;
         } catch (IOException e) {
             e.printStackTrace ();
-            return 0;
+            return null;
         }
     }
 
     @Override
-    protected void onPostExecute(Integer i){
-        super.onPostExecute (i);
-        if (i==0){
-            mStateView.showEmpty();
+    protected void onPostExecute(List<BookList> listDetails){
+        super.onPostExecute (listDetails);
+        if (listDetails==null){
+            gs.GetFailed ();
         }else {
-            mStateView.showContent();
-            adapter.notifyDataSetChanged ();
-            onDataFinishedListener.onDataSuccessfully (totalPage);
+            gs.GetOK (listDetails,totalPage);
         }
     }
 
-    public void setOnDataFinishedListener(
-            OnDataFinishedListener onDataFinishedListener) {
-        this.onDataFinishedListener = onDataFinishedListener;
-    }
 }

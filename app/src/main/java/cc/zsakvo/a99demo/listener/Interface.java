@@ -39,4 +39,14 @@ public class Interface {
     public interface GetArticle{
         void GetResult(Boolean result);
     }
+
+    public interface GetCategoryList{
+        void GetOK(List<BookList> listDetails);
+        void GetFailed();
+    }
+
+    public interface GetSearch{
+        void GetOK(List<BookList> listDetails,int totalPages);
+        void GetFailed();
+    }
 }

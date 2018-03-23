@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.github.nukc.stateview.StateView;
+import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
@@ -26,13 +27,14 @@ import java.util.List;
 
 import cc.zsakvo.a99demo.classes.BookList;
 import cc.zsakvo.a99demo.classes.DownloadDetails;
+import cc.zsakvo.a99demo.listener.Interface;
 import cc.zsakvo.a99demo.listener.ItemClickListener;
 import cc.zsakvo.a99demo.listener.OnDataFinishedListener;
 import cc.zsakvo.a99demo.task.GetSearchListTask;
 import km.lmy.searchview.SearchView;
 
 
-public class SearchActivity extends AppCompatActivity implements ItemClickListener,View.OnClickListener{
+public class SearchActivity extends AppCompatActivity implements ItemClickListener,View.OnClickListener,Interface.GetSearch,OnRefreshListener,OnLoadmoreListener{
 
     private RecyclerView recyclerView;
     private StateView mStateView;
@@ -45,6 +47,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
     String searchStr;
     Boolean isInit;
     int totalPage = 1;
+    RefreshLayout refreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,11 +55,15 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         setContentView(R.layout.activity_search);
         toolbar = (Toolbar)findViewById(R.id.s_toolBar);
         searchView = (SearchView)findViewById(R.id.s_searchView);
-        fab = (FloatingActionButton)findViewById(R.id.s_fab);
-        fab.setOnClickListener(this);
+//        fab = (FloatingActionButton)findViewById(R.id.s_fab);
+//        fab.setOnClickListener(this);
         setSupportActionBar(toolbar);
         toolbar.setTitle("搜索书籍");
-        mStateView = StateView.inject(findViewById (R.id.coord));
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar ().setDisplayHomeAsUpEnabled (true);
+        }
+//        mStateView = StateView.inject(findViewById (R.id.coord));
         recyclerView = (RecyclerView)findViewById(R.id.s_novel_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
@@ -64,29 +71,10 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
         adapter.setOnItemClickListener(SearchActivity.this);
         recyclerView.setAdapter(adapter);
-        RefreshLayout refreshLayout = (RefreshLayout)findViewById(R.id.s_refreshLayout);
-        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                page = 1;
-                searchBook();
-                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
-            }
-        });
-        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-                System.out.println (totalPage);
-                if (page<totalPage) {
-                    page++;
-                    searchBook();
-                    refreshlayout.finishLoadmore(2000/*,false*/);//传入false表示加载失败
-                }else {
-                    Snackbar.make(fab,"已经是最后一页了啦!",Snackbar.LENGTH_LONG).show();
-                    refreshlayout.finishLoadmore(false/*,false*/);//传入false表示加载失败
-                }
-            }
-        });
+        refreshLayout = (RefreshLayout)findViewById(R.id.s_refreshLayout);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setOnLoadmoreListener(this);
+        MaterialHeader mMaterialHeader = (MaterialHeader) refreshLayout.getRefreshHeader ();
     }
 
     private void initView(){
@@ -123,13 +111,14 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
     }
 
     private void initSearchView(){
-        List<String> historyList = new ArrayList<>();
-        historyList.add("白夜追凶");
-        historyList.add("人间椅子");
-        historyList.add("两分铜币");
-        historyList.add("芭提雅血咒");
-        //设置全新的历史记录列表
-        searchView.setNewHistoryList(historyList);
+        searchView.setHintText ("请输入关键字，如 人间椅子");
+//        List<String> historyList = new ArrayList<>();
+//        historyList.add("白夜追凶");
+//        historyList.add("人间椅子");
+//        historyList.add("两分铜币");
+//        historyList.add("芭提雅血咒");
+//        //设置全新的历史记录列表
+//        searchView.setNewHistoryList(historyList);
         searchView.setHistoryItemClickListener(new SearchView.OnHistoryItemClickListener() {
             @Override
             public void onClick(String historyStr, int position) {
@@ -137,7 +126,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
                 searchStr = historyStr;
                 page = 1;
                 isInit = true;
-                searchBook();
+                onRefresh (refreshLayout);
             }
         });
 
@@ -150,7 +139,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
                 page = 1;
                 isInit = true;
                 searchStr = searchText;
-                searchBook();
+                onRefresh (refreshLayout);
             }
         });
     }
@@ -191,27 +180,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         }
         toolbar.setTitle("搜索："+searchStr);
         String url = "http://www.99lib.net/book/search.php?keyword="+searchStr+"&page="+page;
-        GetSearchListTask gst = new GetSearchListTask (totalPage, listDetails, adapter,mStateView);
-        gst.setOnDataFinishedListener (new OnDataFinishedListener () {
-            @Override
-            public void onDataSuccessfully(Object data) {
-                totalPage = (int)data;
-            }
-
-            @Override
-            public void onDataSuccessfully(DownloadDetails data) {
-
-            }
-
-            @Override
-            public void onDataFailed() {
-
-            }
-            @Override
-            public void onDownloadFinishedNum(int num){
-
-            }
-        });
+        GetSearchListTask gst = new GetSearchListTask (this);
         gst.execute (url,page);
         }
 
@@ -235,13 +204,55 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.s_fab:
-                adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
-                adapter.setOnItemClickListener(SearchActivity.this);
-                recyclerView.setAdapter(adapter);
-                break;
+//            case R.id.s_fab:
+//                adapter = new cc.zsakvo.a99demo.adapter.ListAdapter(listDetails);
+//                adapter.setOnItemClickListener(SearchActivity.this);
+//                recyclerView.setAdapter(adapter);
+//                break;
             default:
                 break;
         }
+    }
+
+    @Override
+    public void GetOK(List<BookList> listDetails,int totalPages) {
+        this.listDetails.addAll (listDetails);
+        this.totalPage = totalPages;
+        adapter.notifyDataSetChanged();
+        if (refreshLayout.isRefreshing ()){
+            refreshLayout.finishRefresh (500);
+        }else {
+            refreshLayout.finishLoadmore (500);
+        }
+    }
+
+    @Override
+    public void GetFailed() {
+        refreshLayout.finishLoadmoreWithNoMoreData ();
+        if (refreshLayout.isRefreshing ()){
+            refreshLayout.finishRefresh (false);
+        }else {
+            refreshLayout.finishLoadmore (false);
+        }
+        Snackbar.make (recyclerView,"数据获取失败，请检查网络连接或换个关键词~",Snackbar.LENGTH_LONG).show ();
+    }
+
+    @Override
+    public void onLoadmore(RefreshLayout refreshlayout) {
+        if (page==totalPage){
+            refreshLayout.finishLoadmoreWithNoMoreData ();
+            Snackbar.make (recyclerView,"已经是最后一页了！",Snackbar.LENGTH_LONG).show ();
+        }else {
+            page++;
+            searchBook();
+        }
+    }
+
+    @Override
+    public void onRefresh(RefreshLayout refreshlayout) {
+        page = 1;
+        listDetails.clear ();
+        recyclerView.setAdapter (adapter);
+        searchBook();
     }
 }

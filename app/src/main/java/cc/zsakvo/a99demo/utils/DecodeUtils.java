@@ -122,7 +122,6 @@ public class DecodeUtils {
                             content.append("<p class=\"a\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+childNode[i].text()+"</p>\n");
                             break;
                     }
-//                    content.append("<p class=\"a\">"+childNode[i].text()+"</p>\n");
                 }
             }
             return content.toString();
