@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,6 +76,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setOnLoadmoreListener(this);
         MaterialHeader mMaterialHeader = (MaterialHeader) refreshLayout.getRefreshHeader ();
+        searchView.defaultState (SearchView.OPEN);
     }
 
     private void initView(){
@@ -95,7 +97,7 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu){
-        searchView.autoOpenOrClose();
+//        searchView.open ();
         return true;
     }
 
@@ -106,19 +108,16 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
             case R.id.s_search:
                 searchView.autoOpenOrClose();
                 break;
+            case android.R.id.home:
+                finish ();
+                break;
         }
         return true;
     }
 
     private void initSearchView(){
         searchView.setHintText ("请输入关键字，如 人间椅子");
-//        List<String> historyList = new ArrayList<>();
-//        historyList.add("白夜追凶");
-//        historyList.add("人间椅子");
-//        historyList.add("两分铜币");
-//        historyList.add("芭提雅血咒");
-//        //设置全新的历史记录列表
-//        searchView.setNewHistoryList(historyList);
+//        searchView.setSearchEditText ("我的");
         searchView.setHistoryItemClickListener(new SearchView.OnHistoryItemClickListener() {
             @Override
             public void onClick(String historyStr, int position) {
@@ -188,6 +187,9 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
     public void onBackPressed(){
         if (searchView.isOpen()){
             searchView.close();
+            if (listDetails.size ()==0){
+                super.onBackPressed ();
+            }
         }else {
             super.onBackPressed();
         }
@@ -217,7 +219,9 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
     @Override
     public void GetOK(List<BookList> listDetails,int totalPages) {
         this.listDetails.addAll (listDetails);
-        this.totalPage = totalPages;
+        if (totalPages!=0) {
+            this.totalPage = totalPages;
+        }
         adapter.notifyDataSetChanged();
         if (refreshLayout.isRefreshing ()){
             refreshLayout.finishRefresh (500);
@@ -239,7 +243,8 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
 
     @Override
     public void onLoadmore(RefreshLayout refreshlayout) {
-        if (page==totalPage){
+        Log.e ("onLoadmore: ",page+"ppp"+totalPage );
+        if (page>=totalPage){
             refreshLayout.finishLoadmoreWithNoMoreData ();
             Snackbar.make (recyclerView,"已经是最后一页了！",Snackbar.LENGTH_LONG).show ();
         }else {
@@ -253,6 +258,9 @@ public class SearchActivity extends AppCompatActivity implements ItemClickListen
         page = 1;
         listDetails.clear ();
         recyclerView.setAdapter (adapter);
+        refreshlayout.resetNoMoreData ();
         searchBook();
     }
+
+
 }

@@ -65,6 +65,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private int whatGenerate = 0;
     private Boolean loadOK = false;
     DialogUtils du;
+    Boolean hasPermissions = false;
     DownloadDetails downloadDetails = null;
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -99,14 +100,20 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         refreshLayout.setEnableAutoLoadmore (true);
         MaterialHeader mMaterialHeader = (MaterialHeader) refreshLayout.getRefreshHeader ();
         refreshLayout.autoRefresh ();
+        verifyStoragePermissions(BookDetailActivity.this);
     }
 
     private void beginDownload(){
-        nowNum = 0;
-        verifyStoragePermissions(BookDetailActivity.this);
-        GetDownloadInfoTask gdi = new GetDownloadInfoTask (du);
-        gdi.setOnDataFinishedListener (this);
-        gdi.execute (url);
+        remindStoragePermissions(BookDetailActivity.this);
+        if (hasPermissions) {
+            nowNum = 0;
+            GetDownloadInfoTask gdi = new GetDownloadInfoTask (du);
+            gdi.setOnDataFinishedListener (this);
+            gdi.execute (url);
+        }else {
+            Snackbar.make (toolbar,"未授予存储权限，无法下载书籍！",Snackbar.LENGTH_LONG).show ();
+            verifyStoragePermissions (BookDetailActivity.this);
+        }
     }
 
     @Override
@@ -123,7 +130,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         }
     }
 
-    public static void verifyStoragePermissions(Activity activity) {
+    public  void verifyStoragePermissions(Activity activity) {
 
         try {
             //检测是否有写的权限
@@ -132,6 +139,24 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
             if (permission != PackageManager.PERMISSION_GRANTED) {
                 // 没有写的权限，去申请写的权限，会弹出对话框
                 ActivityCompat.requestPermissions(activity, PERMISSIONS_STORAGE,REQUEST_EXTERNAL_STORAGE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void remindStoragePermissions(Activity activity) {
+
+        try {
+            //检测是否有写的权限
+            int permission = ActivityCompat.checkSelfPermission(activity,
+                    "android.permission.WRITE_EXTERNAL_STORAGE");
+            if (permission != PackageManager.PERMISSION_GRANTED) {
+                // 没有写的权限，去申请写的权限，会弹出对话框
+                Snackbar.make (toolbar,"未授予存储权限，将无法下载书籍！",Snackbar.LENGTH_LONG).show ();
+            }else {
+                hasPermissions = true;
             }
         } catch (Exception e) {
             e.printStackTrace();

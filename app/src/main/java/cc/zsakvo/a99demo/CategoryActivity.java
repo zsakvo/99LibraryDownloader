@@ -76,27 +76,6 @@ public class CategoryActivity extends AppCompatActivity implements ItemClickList
         adapter.setOnItemClickListener(CategoryActivity.this);
         recyclerView.setAdapter(adapter);
         refreshLayout = (RefreshLayout)findViewById(R.id.c_refreshLayout);
-//        refreshLayout.setOnRefreshListener(new OnRefreshListener() {
-//            @Override
-//            public void onRefresh(RefreshLayout refreshlayout) {
-//                page = 1;
-//                searchBook();
-//                refreshlayout.finishRefresh(2000/*,false*/);//传入false表示刷新失败
-//            }
-//        });
-//        refreshLayout.setOnLoadmoreListener(new OnLoadmoreListener() {
-//            @Override
-//            public void onLoadmore(RefreshLayout refreshlayout) {
-//                if (page<totalPage) {
-//                    page++;
-//                    searchBook();
-//                    refreshlayout.finishLoadmore(2000/*,false*/);//传入false表示加载失败
-//                }else {
-//                    Snackbar.make(fab,"已经是最后一页了啦!",Snackbar.LENGTH_LONG).show();
-//                    refreshlayout.finishLoadmore(false/*,false*/);//传入false表示加载失败
-//                }
-//            }
-//        });
         refreshLayout.setOnRefreshListener (this);
         refreshLayout.setOnLoadmoreListener (this);
         MaterialHeader mMaterialHeader = (MaterialHeader) refreshLayout.getRefreshHeader ();

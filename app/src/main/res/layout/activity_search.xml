@@ -16,12 +16,6 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="0.1dp"
-        android:background="#8c8e8f"
-        android:layout_below="@id/s_toolBar"
-        android:id="@+id/s_line"/>
 
     <km.lmy.searchview.SearchView
         android:id="@+id/s_searchView"
@@ -30,23 +24,30 @@
         android:elevation="5dp"
         SearchView:defaultState="open"
         SearchView:hintText="输入书籍名称，如：白夜追凶" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0.1dp"
+        android:background="#8c8e8f"
+        android:layout_below="@id/s_toolBar"
+        android:id="@+id/s_line"/>
 
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/s_refreshLayout"
-            android:layout_below="@id/s_searchView"
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/s_refreshLayout"
+        android:layout_below="@id/s_line"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.scwang.smartrefresh.header.MaterialHeader
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-            <com.scwang.smartrefresh.header.MaterialHeader
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"/>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_below="@id/s_line"
             android:id="@+id/s_novel_list">
         </android.support.v7.widget.RecyclerView>
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
 
 
 </RelativeLayout>

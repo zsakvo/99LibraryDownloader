@@ -54,6 +54,7 @@ public class GetDownloadInfoTask extends AsyncTask<Object,Integer,DownloadDetail
         bookID = url.replace ("http://www.99lib.net/book/","").replace ("/index.htm","");
         try {
             doc = Jsoup.connect(url).timeout(20000).get();
+            doc.select ("dt").remove ();
             bookName = doc.selectFirst("h2").text();
             bookAuthor = SplitUtil.splitElement(doc.selectFirst("h4"));
             bookCoverURL = "http://www.99lib.net"+doc.selectFirst("img").attr("src");
@@ -62,6 +63,7 @@ public class GetDownloadInfoTask extends AsyncTask<Object,Integer,DownloadDetail
             chapters = new ArrayList<>();
             for (Element e:elements_drags){
             titles.add(e.selectFirst("a").text());
+                Log.e ( "doInBackground: ",e.toString () );
             chapterIDs.add(ReplaceUtils.getChapterID (bookID,e.selectFirst("a").attr("href")));
             }
             size = chapters.size ();
