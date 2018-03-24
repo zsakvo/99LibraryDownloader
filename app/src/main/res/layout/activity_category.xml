@@ -32,11 +32,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"/>
 
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/c_toolBar"
             android:id="@+id/c_novel_list">
         </android.support.v7.widget.RecyclerView>
+        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 </RelativeLayout>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="cc.zsakvo.a99demo">
+    package="cc.zsakvo.ninecswd">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -14,18 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/ATheme"
         tools:replace="android:theme"
-        android:name=".application.MyApplication">
-        <activity android:name=".MainActivity">
+        android:name="cc.zsakvo.ninecswd.application.MyApplication">
+        <activity android:name="cc.zsakvo.ninecswd.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".BookDetailActivity" />
-        <activity android:name=".SearchActivity" />
-        <activity android:name=".CategoryActivity" />
-        <activity android:name=".ArticleActivity"></activity>
+        <activity android:name="cc.zsakvo.ninecswd.BookDetailActivity" />
+        <activity android:name="cc.zsakvo.ninecswd.SearchActivity" />
+        <activity android:name="cc.zsakvo.ninecswd.CategoryActivity" />
+        <activity android:name="cc.zsakvo.ninecswd.ArticleActivity"/>
     </application>
 
 </manifest>
