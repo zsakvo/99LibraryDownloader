@@ -101,11 +101,19 @@
 
             <TextView
                 android:layout_width="0dp"
-                android:layout_weight="0"
+                android:layout_weight="1"
                 android:gravity="center"
                 android:layout_height="match_parent"
                 android:id="@+id/dl_epub"
                 android:text="Epub下载"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:id="@+id/dl_nob"
+                android:text="Nob下载"/>
 
         </LinearLayout>
 

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -21,6 +23,8 @@ import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,13 +40,14 @@ import cc.zsakvo.ninecswd.task.SetCoverTask;
 import cc.zsakvo.ninecswd.utils.DialogUtils;
 import cc.zsakvo.ninecswd.utils.EpubUtils;
 import cc.zsakvo.ninecswd.utils.SplitUtil;
+import io.simi.nob.NOBKit;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
 public class BookDetailActivity extends AppCompatActivity implements View.OnClickListener,OnDataFinishedListener,EpubUtils.getResult,Interface.GetBookDetailFinish,OnRefreshListener,Interface.OutPutTxtFinish{
 
     Toolbar toolbar;
-    TextView tv_title,tv_intro,tv_detail,tv_dlTXT,tv_dlEpub;
+    TextView tv_title,tv_intro,tv_detail,tv_dlTXT,tv_dlEpub,tv_dlNob;
     ImageView iv_cover;
     RefreshLayout refreshLayout;
     String url;
@@ -85,6 +90,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_dlTXT.setOnClickListener (this);
         tv_dlEpub = (TextView)findViewById (R.id.dl_epub);
         tv_dlEpub.setOnClickListener (this);
+        tv_dlNob = (TextView) findViewById (R.id.dl_nob);
+        tv_dlNob.setOnClickListener (this);
 
         refreshLayout = (RefreshLayout) findViewById (R.id.bdRefreshLayout);
         refreshLayout.setOnRefreshListener(this);
@@ -116,6 +123,10 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.dl_epub:
                 whatGenerate = 1;
+                beginDownload();
+                break;
+            case R.id.dl_nob:
+                whatGenerate = 2;
                 beginDownload();
                 break;
         }
@@ -208,6 +219,16 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                             downloadDetails.getTitles (),
                             this).generateEpub ();
                     break;
+                case 2:
+
+                     NOBKit.Builder builder = new NOBKit
+                            .Builder (Environment.getExternalStorageDirectory().getPath()+"/99lib/Nob/"+downloadDetails.getBookName ())
+                            .cover (((BitmapDrawable) ((ImageView) iv_cover).getDrawable()).getBitmap())
+                            .metadata (downloadDetails.getBookName (), downloadDetails.getBookAuthor ())
+                            .putChapters (downloadDetails.getTitles (),chapters);
+                     isGenerOk (1);
+                     builder.build (downloadDetails.getBookName ());
+                     break;
             }
         }
     }

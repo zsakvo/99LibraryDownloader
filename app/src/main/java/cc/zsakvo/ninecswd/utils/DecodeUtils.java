@@ -70,14 +70,12 @@ public class DecodeUtils {
                     text = "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
                     break;
                 case 2:
-                    text = "<h2 id=\"title\" class=\"titlel2std\" style=\"text-align:center;\">"+this.title+"</h2>\n"+load(childNotes,star);
+                    text = this.title+"</h2>\n"+load(childNotes,star);
                 default:
-                    text = this.title+"\n\n"+load(childNotes,star)+"\n\n\n";
+                    text = load(childNotes,star);
                 break;
             }
             return text;
-//            return "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
-//            return this.title+"\n"+load(childNotes,star);
         }
 
         private String load(Elements childNotes,int star){
@@ -119,7 +117,7 @@ public class DecodeUtils {
                             content.append("<p class=\"a\">"+childNode[i].text()+"</p>\n");
                             break;
                         case 2:
-                            content.append("<p class=\"a\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"+childNode[i].text()+"</p>\n");
+                            content.append(childNode[i].text()+"\n");
                             break;
                     }
                 }

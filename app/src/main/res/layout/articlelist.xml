@@ -7,12 +7,18 @@
     android:paddingEnd="20dp"
     android:id="@+id/alist">
 
-    <TextView
-        android:layout_marginTop="14dp"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="14dp"
         android:gravity="center_vertical"
+        android:id="@+id/at_lin">
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="2"
+        android:layout_height="36dp"
         android:id="@+id/alist_name"
+        android:gravity="center_vertical"
         android:text="筒中的世界"
         android:textSize="14sp"
         android:paddingStart="8dp"
@@ -20,21 +26,20 @@
 
     <TextView
         android:id="@+id/alist_intro"
-        android:layout_below="@id/alist_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="36dp"
-        android:gravity="center_vertical"
-        android:layout_alignTop="@id/alist_name"
-        android:layout_alignParentEnd="true"
-        android:paddingEnd="8dp"
-        android:paddingStart="8dp"
+        android:gravity="center_vertical|end"
+        android:layout_marginEnd="8dp"
         android:text="作者：刘洋"/>
+
+    </LinearLayout>
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="0.1dp"
         android:layout_marginTop="14dp"
         android:background="#8c8e8f"
-        android:layout_below="@id/alist_intro"/>
+        android:layout_below="@id/at_lin"/>
 
 </RelativeLayout>
