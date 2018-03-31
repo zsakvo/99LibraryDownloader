@@ -2,10 +2,13 @@ package cc.zsakvo.ninecswd;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,17 +17,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.scwang.smartrefresh.header.MaterialHeader;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import org.w3c.dom.Text;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -83,6 +89,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_intro = (TextView)findViewById(R.id.bdIntro);
         tv_detail = (TextView)findViewById(R.id.bdDetail);
         iv_cover = (ImageView)findViewById(R.id.bdCover);
+        iv_cover.setOnClickListener (this);
         du = new DialogUtils (this,loadingDialog);
 
         cv = (CardView)findViewById (R.id.dl_card);
@@ -129,6 +136,10 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 whatGenerate = 2;
                 beginDownload();
                 break;
+            case R.id.bdCover:
+                Intent intent = new Intent (BookDetailActivity.this,ChangeCoverActivity.class);
+                intent.putExtra ("str",tv_title.getText ());
+                startActivity (intent);
         }
     }
 
@@ -242,11 +253,18 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         return super.onOptionsItemSelected(item);
     }
 
+    public void scanFile() {
+        final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        final Uri contentUri = Uri.fromFile(new File (Environment.getExternalStorageDirectory().getPath()+"/99lib/Nob/"+downloadDetails.getBookName ()+"/"+downloadDetails.getBookName ()+".nob"));
+        scanIntent.setData(contentUri);
+        sendBroadcast(scanIntent);
+    }
 
     @Override
     public void isGenerOk(int i) {
         if (i==1){
             du.concelDialog ();
+            scanFile ();
             Snackbar.make (toolbar,"书籍下载完毕！",Snackbar.LENGTH_LONG).show ();
         }
     }
@@ -262,15 +280,19 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_title.setText (strings[0]);
         tv_intro.setText (strings[1]);
         tv_detail.setText (strings[2]);
-        new SetCoverTask (new Interface.GetCover () {
-            @Override
-            public void GetCoverOK(Bitmap bitmap) {
-                iv_cover.setImageBitmap (bitmap);
-                cv.setVisibility (View.VISIBLE);
-                cv.bringToFront ();
-                refreshLayout.finishRefresh (500);
-            }
-        }).execute (strings[3]);
+//        new SetCoverTask (new Interface.GetCover () {
+//            @Override
+//            public void GetCoverOK(Bitmap bitmap) {
+//                iv_cover.setImageBitmap (bitmap);
+//                cv.setVisibility (View.VISIBLE);
+//                cv.bringToFront ();
+//                refreshLayout.finishRefresh (500);
+//            }
+//        }).execute (strings[3]);
+        Glide.with(BookDetailActivity.this).load(strings[3]).into(iv_cover);
+        cv.setVisibility (View.VISIBLE);
+        cv.bringToFront ();
+        refreshLayout.finishRefresh (500);
     }
 
     GetBookDetailTask gbd;

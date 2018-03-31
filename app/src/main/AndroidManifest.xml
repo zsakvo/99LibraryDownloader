@@ -7,25 +7,26 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".application.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/ATheme"
-        tools:replace="android:theme"
-        android:name="cc.zsakvo.ninecswd.application.MyApplication">
-        <activity android:name="cc.zsakvo.ninecswd.MainActivity">
+        tools:replace="android:theme">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="cc.zsakvo.ninecswd.BookDetailActivity" />
-        <activity android:name="cc.zsakvo.ninecswd.SearchActivity" />
-        <activity android:name="cc.zsakvo.ninecswd.CategoryActivity" />
-        <activity android:name="cc.zsakvo.ninecswd.ArticleActivity"/>
+        <activity android:name=".BookDetailActivity" />
+        <activity android:name=".SearchActivity" />
+        <activity android:name=".CategoryActivity" />
+        <activity android:name=".ArticleActivity" />
+        <activity android:name=".ChangeCoverActivity"></activity>
     </application>
 
 </manifest>
