@@ -73,6 +73,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
     private static String[] PERMISSIONS_STORAGE = {
             "android.permission.READ_EXTERNAL_STORAGE",
             "android.permission.WRITE_EXTERNAL_STORAGE" };
+    private Bitmap cover_bit;
+    private String searchStr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,8 +140,8 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.bdCover:
                 Intent intent = new Intent (BookDetailActivity.this,ChangeCoverActivity.class);
-                intent.putExtra ("str",tv_title.getText ());
-                startActivity (intent);
+                intent.putExtra ("str",searchStr);
+                startActivityForResult(intent, 0);
         }
     }
 
@@ -234,7 +236,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
                      NOBKit.Builder builder = new NOBKit
                             .Builder (Environment.getExternalStorageDirectory().getPath()+"/99lib/Nob/"+downloadDetails.getBookName ())
-                            .cover (((BitmapDrawable) ((ImageView) iv_cover).getDrawable()).getBitmap())
+                            .cover (cover_bit)
                             .metadata (downloadDetails.getBookName (), downloadDetails.getBookAuthor ())
                             .putChapters (downloadDetails.getTitles (),chapters);
                      isGenerOk (1);
@@ -280,16 +282,15 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         tv_title.setText (strings[0]);
         tv_intro.setText (strings[1]);
         tv_detail.setText (strings[2]);
-//        new SetCoverTask (new Interface.GetCover () {
-//            @Override
-//            public void GetCoverOK(Bitmap bitmap) {
-//                iv_cover.setImageBitmap (bitmap);
-//                cv.setVisibility (View.VISIBLE);
-//                cv.bringToFront ();
-//                refreshLayout.finishRefresh (500);
-//            }
-//        }).execute (strings[3]);
+        searchStr = strings[4];
         Glide.with(BookDetailActivity.this).load(strings[3]).into(iv_cover);
+        new SetCoverTask (new Interface.GetCover () {
+            @Override
+            public void GetCoverOK(Bitmap bitmap) {
+                cover_bit = bitmap;
+                iv_cover.setImageBitmap (bitmap);
+            }
+        }).execute (strings[3]);
         cv.setVisibility (View.VISIBLE);
         cv.bringToFront ();
         refreshLayout.finishRefresh (500);
@@ -323,5 +324,26 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
         if (gbd != null && gbd.getStatus() != AsyncTask.Status.FINISHED)
             gbd.cancel(true);
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        tv_dlNob.setOnClickListener (null);
+        tv_dlNob.setText ("请稍后");
+        if (data!=null) {
+            Glide.with (BookDetailActivity.this).load (data.getStringExtra ("url")).into (iv_cover);
+            new SetCoverTask (new Interface.GetCover () {
+                @Override
+                public void GetCoverOK(Bitmap bitmap) {
+                    cover_bit = bitmap;
+                    tv_dlNob.setText ("Nob下载");
+                    tv_dlNob.setOnClickListener (BookDetailActivity.this);
+                }
+            }).execute (data.getStringExtra ("url"));
+        }else {
+            tv_dlNob.setText ("Nob下载");
+            tv_dlNob.setOnClickListener (BookDetailActivity.this);
+        }
     }
 }

@@ -33,6 +33,7 @@ dependencies {
     implementation 'io.simi:nob:0.0.8'
 //    implementation 'com.mapzen:on-the-road:0.8.1'
     implementation 'com.github.bumptech.glide:glide:4.4.0'
+//    implementation 'com.alibaba:fastjson:1.1.68.android'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:1.2.31"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
     testImplementation 'junit:junit:4.12'

@@ -70,7 +70,12 @@ public class DecodeUtils {
                     text = "<h2 id=\"title\" class=\"titlel2std\">"+this.title+"</h2>\n"+load(childNotes,star);
                     break;
                 case 2:
-                    text = this.title+"</h2>\n"+load(childNotes,star);
+                    text = load(childNotes,star);
+                    break;
+                case 3:
+                    text = "<big><b>"+this.title+"</b></big>\n\n"+load(childNotes,star)+"\n\n\n";
+                    break;
+
                 default:
                     text = load(childNotes,star);
                 break;
@@ -118,6 +123,9 @@ public class DecodeUtils {
                             break;
                         case 2:
                             content.append(childNode[i].text()+"\n");
+                            break;
+                        case 3:
+                            content.append("<p class=\"a\">&nbsp;&nbsp;&nbsp;&nbsp;"+childNode[i].text()+"</p>\n");
                             break;
                     }
                 }

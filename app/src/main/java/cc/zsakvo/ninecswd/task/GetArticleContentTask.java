@@ -31,7 +31,7 @@ public class GetArticleContentTask extends AsyncTask<String, Integer,String> {
 
     @Override
     protected String doInBackground(String ... params) {
-        String content =  DecodeUtils.url (params[0],2);
+        String content =  DecodeUtils.url (params[0],3);
         if (content==null){
             return null;
         }else {

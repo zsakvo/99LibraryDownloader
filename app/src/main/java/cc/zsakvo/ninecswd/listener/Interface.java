@@ -31,6 +31,11 @@ public class Interface {
         void GetCoverOK(Bitmap bitmap);
     }
 
+    public interface GetCoverUrls{
+        void GetCoverUrls(List<String> list);
+        void GetCoverUrlsFailed();
+    }
+
     public interface GetArticleList{
         void GetOK(List<ArticleList> listDetails, int totalPages);
         void GetFailed();

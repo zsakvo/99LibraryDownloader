@@ -1,15 +1,27 @@
 package cc.zsakvo.ninecswd;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
-public class ChangeCoverActivity extends AppCompatActivity {
+import java.util.List;
+
+import cc.zsakvo.ninecswd.adapter.CoverListAdapter;
+import cc.zsakvo.ninecswd.listener.Interface;
+import cc.zsakvo.ninecswd.listener.ItemClickListener;
+import cc.zsakvo.ninecswd.task.GetCoversTask;
+
+public class ChangeCoverActivity extends AppCompatActivity implements Interface.GetCoverUrls,ItemClickListener{
 
 //    public enum Engine {
 //        Bing,
@@ -20,7 +32,10 @@ public class ChangeCoverActivity extends AppCompatActivity {
     Toolbar toolbar;
     String[] engine = new String[]{"Bing","Baidu","Sogou"};
     private String searchStr;
-    private int searchEngine = 0;
+    private String searchEngine = "Bing";
+    private RecyclerView recyclerView;
+    private CoverListAdapter adapter;
+    private List<String> list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +43,13 @@ public class ChangeCoverActivity extends AppCompatActivity {
         setContentView (R.layout.activity_change_cover);
         toolbar = (Toolbar)findViewById (R.id.ccToolBar);
         toolbar.setTitle ("选择封面");
+        recyclerView = (RecyclerView)findViewById (R.id.cover_recycler);
         setSupportActionBar (toolbar);
         if (getSupportActionBar ()!=null){
             getSupportActionBar ().setDisplayHomeAsUpEnabled (true);
         }
         searchStr = getIntent ().getStringExtra ("str");
+        new GetCoversTask (this).execute (searchStr,searchEngine);
     }
 
     @Override
@@ -78,4 +95,33 @@ public class ChangeCoverActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void GetCoverUrls(List<String> list) {
+        this.list = list;
+        StaggeredGridLayoutManager layoutManager = new
+                StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new CoverListAdapter (list);
+        adapter.setOnItemClickListener (this);
+        recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void GetCoverUrlsFailed() {
+
+    }
+
+    @Override
+    public void onItemClick(View view, int postion) {
+        Log.e ( "onItemClick: ",list.get (postion));
+        Intent intent = new Intent ();
+        intent.putExtra ("url",list.get (postion));
+        setResult(1, intent);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed ();
+    }
 }
