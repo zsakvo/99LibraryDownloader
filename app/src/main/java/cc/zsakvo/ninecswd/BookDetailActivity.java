@@ -233,11 +233,10 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
                             this).generateEpub ();
                     break;
                 case 2:
-
                      NOBKit.Builder builder = new NOBKit
-                            .Builder (Environment.getExternalStorageDirectory().getPath()+"/99lib/Nob/"+downloadDetails.getBookName ())
+                            .Builder (Environment.getExternalStorageDirectory().getPath()+"/99lib/Nob")
                             .cover (cover_bit)
-                            .metadata (downloadDetails.getBookName (), downloadDetails.getBookAuthor ())
+                            .metadata (downloadDetails.getBookName (), downloadDetails.getBookAuthor ().replace ("作者: ",""))
                             .putChapters (downloadDetails.getTitles (),chapters);
                      isGenerOk (1);
                      builder.build (downloadDetails.getBookName ());
@@ -257,7 +256,7 @@ public class BookDetailActivity extends AppCompatActivity implements View.OnClic
 
     public void scanFile() {
         final Intent scanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-        final Uri contentUri = Uri.fromFile(new File (Environment.getExternalStorageDirectory().getPath()+"/99lib/Nob/"+downloadDetails.getBookName ()+"/"+downloadDetails.getBookName ()+".nob"));
+        final Uri contentUri = Uri.fromFile(new File (Environment.getExternalStorageDirectory().getPath()+"/99lib/Nob/"+downloadDetails.getBookName ()+".nob"));
         scanIntent.setData(contentUri);
         sendBroadcast(scanIntent);
     }
