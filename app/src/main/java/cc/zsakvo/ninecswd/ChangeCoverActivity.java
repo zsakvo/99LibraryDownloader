@@ -2,6 +2,7 @@ package cc.zsakvo.ninecswd;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cc.zsakvo.ninecswd.adapter.CoverListAdapter;
@@ -30,12 +32,12 @@ public class ChangeCoverActivity extends AppCompatActivity implements Interface.
 //    }
 
     Toolbar toolbar;
-    String[] engine = new String[]{"Bing","Baidu","Sogou"};
+    String[] engine = new String[]{"Bing","Baidu"};
     private String searchStr;
-    private String searchEngine = "Bing";
+    private String searchEngine = "Baidu";
     private RecyclerView recyclerView;
     private CoverListAdapter adapter;
-    private List<String> list;
+    private List<String> list = new ArrayList<> ();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +51,12 @@ public class ChangeCoverActivity extends AppCompatActivity implements Interface.
             getSupportActionBar ().setDisplayHomeAsUpEnabled (true);
         }
         searchStr = getIntent ().getStringExtra ("str");
+        StaggeredGridLayoutManager layoutManager = new
+                StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new CoverListAdapter (list);
+        adapter.setOnItemClickListener (this);
+        recyclerView.setAdapter(adapter);
         new GetCoversTask (this).execute (searchStr,searchEngine);
     }
 
@@ -73,20 +81,26 @@ public class ChangeCoverActivity extends AppCompatActivity implements Interface.
                         .setItems(engine, new DialogInterface.OnClickListener () {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                list.clear ();
                                 switch (engine[which]){
                                     case "Bing":
                                         item.setIcon (R.drawable.ic_bing);
+                                        searchEngine = "Bing";
+                                        new GetCoversTask (ChangeCoverActivity.this).execute (searchStr,searchEngine);
                                         break;
                                     case "Baidu":
                                         item.setIcon (R.drawable.ic_baidu);
+                                        searchEngine = "Baidu";
+                                        new GetCoversTask (ChangeCoverActivity.this).execute (searchStr,searchEngine);
                                         break;
-                                    case "Sogou":
-                                        item.setIcon (R.drawable.ic_bing);
-                                        break;
+//                                    case "Sogou":
+//                                        item.setIcon (R.drawable.ic_bing);
+//                                        searchEngine = "Sogou";
+//                                        new GetCoversTask (ChangeCoverActivity.this).execute (searchStr,searchEngine);
+//                                        break;
                                         default:
                                             break;
                                 }
-                                Toast.makeText(ChangeCoverActivity.this, engine[which], Toast.LENGTH_SHORT).show();
                             }
                         }).create();
                 dialog.show();
@@ -97,13 +111,12 @@ public class ChangeCoverActivity extends AppCompatActivity implements Interface.
 
     @Override
     public void GetCoverUrls(List<String> list) {
-        this.list = list;
-        StaggeredGridLayoutManager layoutManager = new
-                StaggeredGridLayoutManager(3,StaggeredGridLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new CoverListAdapter (list);
-        adapter.setOnItemClickListener (this);
-        recyclerView.setAdapter(adapter);
+        if (list.size ()==0){
+            Snackbar.make (recyclerView,"没有找到合适的图片！",Snackbar.LENGTH_LONG).show ();
+        }else {
+            this.list.addAll (list);
+            adapter.notifyDataSetChanged ();
+        }
     }
 
     @Override
@@ -113,7 +126,6 @@ public class ChangeCoverActivity extends AppCompatActivity implements Interface.
 
     @Override
     public void onItemClick(View view, int postion) {
-        Log.e ( "onItemClick: ",list.get (postion));
         Intent intent = new Intent ();
         intent.putExtra ("url",list.get (postion));
         setResult(1, intent);

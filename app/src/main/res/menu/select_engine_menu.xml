@@ -4,7 +4,7 @@
 <item
     android:title="Engine"
     android:id="@+id/select_engine"
-    android:icon="@drawable/ic_bing"
+    android:icon="@drawable/ic_baidu"
     app:showAsAction="always"/>
 
 </menu>
